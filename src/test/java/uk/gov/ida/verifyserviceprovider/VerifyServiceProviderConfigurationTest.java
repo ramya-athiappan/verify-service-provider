@@ -76,8 +76,14 @@ public class VerifyServiceProviderConfigurationTest {
 
     @Test
     public void shouldNotAllowEmptySecureTokenKey() throws Exception {
-        expectedException.expectMessage("secureTokenKey may not be empty");
+        expectedException.expectMessage("may not be empty, or less than 20 characters");
         factory.build(new StringConfigurationSourceProvider("secureTokenKey: \"\""), "");
+    }
+
+    @Test
+    public void shouldNowAllowShortSecureTokenKey() throws Exception {
+        expectedException.expectMessage("secureTokenKey may not be empty, or less than 20 characters");
+        factory.build(new StringConfigurationSourceProvider("secureTokenKey: \"tooShort\""), "");
     }
 
     @Test

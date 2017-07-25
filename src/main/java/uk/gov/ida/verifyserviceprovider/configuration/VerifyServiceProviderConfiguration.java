@@ -44,7 +44,7 @@ public class VerifyServiceProviderConfiguration extends Configuration {
 
     @JsonProperty
     @NotNull
-    @Size(min = 1, message = NOT_EMPTY_MESSAGE)
+    @Size(min = 20, message = "may not be empty, or less than 20 characters")
     @Valid
     private String secureTokenKey;
 
