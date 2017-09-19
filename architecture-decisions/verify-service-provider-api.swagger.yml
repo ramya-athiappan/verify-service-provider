@@ -92,14 +92,8 @@ paths:
               code: 500
               message: "Some error message"
 definitions:
-  ExpectedLevelOfAssurance:
-    description: Level of assurance requested by the Service
-    type: string
-    enum:
-      - LEVEL_1
-      - LEVEL_2
-  ReceivedLevelOfAssurance:
-    description: Level of assurance the user authenticated with.
+  LevelOfAssurance:
+    description: Level of assurance (requested/received) by the service
     type: string
     enum:
       - LEVEL_1
@@ -117,7 +111,7 @@ definitions:
     type: object
     properties:
       levelOfAssurance:
-        $ref: '#/definitions/ExpectedLevelOfAssurance'
+        $ref: '#/definitions/LevelOfAssurance'
   RequestResponseBody:
     type: object
     required:
@@ -160,7 +154,7 @@ definitions:
         format: byte
       levelOfAssurance:
         description: The minimum level of assurance required
-        $ref: '#/definitions/ReceivedLevelOfAssurance'
+        $ref: '#/definitions/LevelOfAssurance'
   TranslatedResponseBody:
     type: object
     required:
@@ -176,7 +170,7 @@ definitions:
         type: string
         format: byte
       levelOfAssurance:
-        $ref: '#/definitions/ReceivedLevelOfAssurance'
+        $ref: '#/definitions/LevelOfAssurance'
       attributes:
         description: An optional attributes-object if no match was possible
         $ref: '#/definitions/Attributes'
