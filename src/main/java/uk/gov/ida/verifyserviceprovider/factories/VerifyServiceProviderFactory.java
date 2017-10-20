@@ -5,6 +5,8 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import uk.gov.ida.saml.security.PublicKeyFactory;
 import uk.gov.ida.verifyserviceprovider.configuration.VerifyServiceProviderConfiguration;
+import uk.gov.ida.verifyserviceprovider.factories.metadata.MetadataUserAgentFactory;
+import uk.gov.ida.verifyserviceprovider.factories.metadata.VersionedMetadataClientFactory;
 import uk.gov.ida.verifyserviceprovider.factories.saml.AuthnRequestFactory;
 import uk.gov.ida.verifyserviceprovider.factories.saml.ResponseFactory;
 import uk.gov.ida.verifyserviceprovider.healthcheck.MetadataHealthCheck;
@@ -18,8 +20,7 @@ import uk.gov.ida.verifyserviceprovider.utils.ManifestReader;
 
 public class VerifyServiceProviderFactory {
 
-    private final DropwizardMetadataResolverFactory metadataResolverFactory = new DropwizardMetadataResolverFactory();
-    private final Environment environment;
+    private final DropwizardMetadataResolverFactory metadataResolverFactory;
     private final VerifyServiceProviderConfiguration configuration;
     private final ResponseFactory responseFactory;
 
@@ -33,14 +34,18 @@ public class VerifyServiceProviderFactory {
         VerifyServiceProviderConfiguration configuration,
         Environment environment
     ) {
-        this.environment = environment;
+        this.manifestReader = new ManifestReader();
+
+        MetadataUserAgentFactory metadataUserAgentFactory = new MetadataUserAgentFactory(manifestReader, configuration.getServiceEntityIds());
+        VersionedMetadataClientFactory clientFactory = new VersionedMetadataClientFactory(metadataUserAgentFactory);
+        this.metadataResolverFactory = new DropwizardMetadataResolverFactory(environment, clientFactory);
+
+        this.entityIdService = new EntityIdService(configuration.getServiceEntityIds());
         this.configuration = configuration;
         this.responseFactory = new ResponseFactory(
             configuration.getSamlPrimaryEncryptionKey(),
             configuration.getSamlSecondaryEncryptionKey());
         this.dateTimeComparator = new DateTimeComparator(configuration.getClockSkew());
-        this.entityIdService = new EntityIdService(configuration.getServiceEntityIds());
-        this.manifestReader = new ManifestReader();
     }
 
     public MetadataHealthCheck getHubMetadataHealthCheck() {
@@ -100,12 +105,14 @@ public class VerifyServiceProviderFactory {
             synchronized (this) {
                 resolver = hubMetadataResolver;
                 if (resolver == null) {
-                    hubMetadataResolver = resolver = metadataResolverFactory.createMetadataResolver(environment, configuration.getVerifyHubMetadata());
+                    hubMetadataResolver = resolver = metadataResolverFactory.createMetadataResolver(configuration.getVerifyHubMetadata());
                 }
             }
         }
         return resolver;
     }
+
+
 
     private MetadataResolver getMsaMetadataResolver() {
         MetadataResolver resolver = msaMetadataResolver;
@@ -113,7 +120,7 @@ public class VerifyServiceProviderFactory {
             synchronized (this) {
                 resolver = msaMetadataResolver;
                 if (resolver == null) {
-                    msaMetadataResolver = resolver = metadataResolverFactory.createMetadataResolverWithoutSignatureValidation(environment, configuration.getMsaMetadata());
+                    msaMetadataResolver = resolver = metadataResolverFactory.createMetadataResolverWithoutSignatureValidation(configuration.getMsaMetadata());
                 }
             }
         }

@@ -1,6 +1,8 @@
 package feature.uk.gov.ida.verifyserviceprovider.configuration;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import common.uk.gov.ida.verifyserviceprovider.servers.MockMsaServer;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.DropwizardTestSupport;
@@ -167,5 +169,24 @@ public class HubMetadataFeatureTest {
 
         assertThat(response.getStatus()).isEqualTo(OK.getStatusCode());
         assertThat(response.readEntity(String.class)).contains(expectedResult);
+    }
+
+
+    @Test
+    public void shouldMakeRequestsWithUserAgentContainingEntityIdsAndVersion() {
+        wireMockServer.stubFor(
+                get(urlEqualTo("/SAML2/metadata"))
+                        .willReturn(
+                                aResponse()
+                                        .withStatus(200)
+                                        .withBody(new MetadataFactory().defaultMetadata())
+                        )
+        );
+
+        applicationTestSupport.before();
+
+        String expectedUserAgent = "VerifyServiceProvider/http://verify-service-provider-local/UNKNOWN_VERSION";
+        RequestPatternBuilder requestMatcher = getRequestedFor(urlEqualTo("/SAML2/metadata")).withHeader("User-Agent", new EqualToPattern(expectedUserAgent));
+        wireMockServer.verify(requestMatcher);
     }
 }

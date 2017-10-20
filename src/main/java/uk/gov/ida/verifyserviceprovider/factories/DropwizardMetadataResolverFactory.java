@@ -36,18 +36,25 @@ public class DropwizardMetadataResolverFactory {
 
     private final MetadataResolverFactory metadataResolverFactory = new MetadataResolverFactory();
     private final ExpiredCertificateMetadataFilter expiredCertificateMetadataFilter = new ExpiredCertificateMetadataFilter();
-    private final MetadataClientFactory metadataClientFactory = new MetadataClientFactory();
+    private final Environment environment;
+    private MetadataClientFactory metadataClientFactory;
 
-    public MetadataResolver createMetadataResolver(Environment environment, VerifyServiceProviderMetadataConfiguration metadataConfiguration) {
-        return createMetadataResolver(environment, metadataConfiguration, true);
+    public DropwizardMetadataResolverFactory(Environment environment, MetadataClientFactory metadataClientFactory) {
+        this.environment = environment;
+        this.metadataClientFactory = metadataClientFactory;
     }
 
-    public MetadataResolver createMetadataResolverWithoutSignatureValidation(Environment environment, VerifyServiceProviderMetadataConfiguration metadataConfiguration) {
-        return createMetadataResolver(environment, metadataConfiguration, false);
+    public MetadataResolver createMetadataResolver(VerifyServiceProviderMetadataConfiguration metadataConfiguration) {
+        return createMetadataResolver(metadataConfiguration, true);
     }
 
-    private MetadataResolver createMetadataResolver(Environment environment, VerifyServiceProviderMetadataConfiguration metadataConfiguration, boolean validateSignatures) {
+    public MetadataResolver createMetadataResolverWithoutSignatureValidation(VerifyServiceProviderMetadataConfiguration metadataConfiguration) {
+        return createMetadataResolver(metadataConfiguration, false);
+    }
+
+    protected MetadataResolver createMetadataResolver(VerifyServiceProviderMetadataConfiguration metadataConfiguration, boolean validateSignatures) {
         URI uri = metadataConfiguration.getUri();
+
         Long minRefreshDelay = metadataConfiguration.getMinRefreshDelay();
         Long maxRefreshDelay = metadataConfiguration.getMaxRefreshDelay();
         Client client = metadataClientFactory.getClient(environment, metadataConfiguration);
