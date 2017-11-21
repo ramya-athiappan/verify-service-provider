@@ -13,14 +13,19 @@ import uk.gov.ida.saml.deserializers.parser.SamlObjectParser;
 import uk.gov.ida.saml.deserializers.validators.Base64StringDecoder;
 import uk.gov.ida.saml.deserializers.validators.NotNullSamlStringValidator;
 import uk.gov.ida.saml.security.AssertionDecrypter;
+import uk.gov.ida.saml.security.CredentialFactorySignatureValidator;
 import uk.gov.ida.saml.security.DecrypterFactory;
 import uk.gov.ida.saml.security.IdaKeyStore;
 import uk.gov.ida.saml.security.IdaKeyStoreCredentialRetriever;
 import uk.gov.ida.saml.security.MetadataBackedSignatureValidator;
 import uk.gov.ida.saml.security.SamlAssertionsSignatureValidator;
 import uk.gov.ida.saml.security.SamlMessageSignatureValidator;
+import uk.gov.ida.saml.security.SignatureValidator;
+import uk.gov.ida.saml.security.SigningCredentialFactory;
+import uk.gov.ida.saml.security.SigningKeyStore;
 import uk.gov.ida.saml.security.validators.encryptedelementtype.EncryptionAlgorithmValidator;
 import uk.gov.ida.saml.security.validators.signature.SamlResponseSignatureValidator;
+import uk.gov.ida.verifyserviceprovider.configuration.MsaConfiguration;
 import uk.gov.ida.verifyserviceprovider.services.AssertionTranslator;
 import uk.gov.ida.verifyserviceprovider.services.ResponseService;
 import uk.gov.ida.verifyserviceprovider.utils.DateTimeComparator;
@@ -34,7 +39,11 @@ import uk.gov.ida.verifyserviceprovider.validators.TimeRestrictionValidator;
 
 import java.security.KeyPair;
 import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -53,7 +62,10 @@ public class ResponseFactory {
     private final PrivateKey samlPrimaryEncryptionKey;
     private final PrivateKey samlSecondaryEncryptionKey;
 
-    public ResponseFactory(PrivateKey samlPrimaryEncryptionKey, PrivateKey samlSecondaryEncryptionKey) {
+    public ResponseFactory(
+        PrivateKey samlPrimaryEncryptionKey,
+        PrivateKey samlSecondaryEncryptionKey
+    ) {
         this.samlPrimaryEncryptionKey = samlPrimaryEncryptionKey;
         this.samlSecondaryEncryptionKey = samlSecondaryEncryptionKey;
     }
@@ -94,10 +106,14 @@ public class ResponseFactory {
 
     public AssertionTranslator createAssertionTranslator(
         MetadataResolver msaMetadataResolver,
+        MsaConfiguration msaConfiguration,
         DateTimeComparator dateTimeComparator
     ) throws ComponentInitializationException {
-        MetadataBackedSignatureValidator metadataBackedSignatureValidator = getMetadataBackedSignatureValidator(msaMetadataResolver);
-        SamlMessageSignatureValidator samlMessageSignatureValidator = new SamlMessageSignatureValidator(metadataBackedSignatureValidator);
+        // TODO: We should have configuration backed signature validator
+//        MetadataBackedSignatureValidator metadataBackedSignatureValidator = getMetadataBackedSignatureValidator(msaMetadataResolver);
+//        SamlMessageSignatureValidator samlMessageSignatureValidator = new SamlMessageSignatureValidator(metadataBackedSignatureValidator);
+        SignatureValidator signatureValidator = getCredentialFactorySignatureValidator(msaConfiguration);
+        SamlMessageSignatureValidator samlMessageSignatureValidator = new SamlMessageSignatureValidator(signatureValidator);
         TimeRestrictionValidator timeRestrictionValidator = new TimeRestrictionValidator(dateTimeComparator);
 
         SamlAssertionsSignatureValidator assertionsSignatureValidator = new SamlAssertionsSignatureValidator(samlMessageSignatureValidator);
@@ -111,6 +127,24 @@ public class ResponseFactory {
             assertionsSignatureValidator,
             assertionValidator
         );
+    }
+
+    private CredentialFactorySignatureValidator getCredentialFactorySignatureValidator(MsaConfiguration msaConfiguration) {
+        SigningKeyStore signingKeyStore = new SigningKeyStore() {
+            @Override
+            public List<PublicKey> getVerifyingKeysForEntity(String entityId) {
+                return new ArrayList<PublicKey>() {{
+                    add(msaConfiguration.getPrimarySigningCertificate().getPublicKey());
+                    Certificate secondarySigningCertificate = msaConfiguration.getSecondarySigningCertificate();
+
+                    if (secondarySigningCertificate != null){
+                        add(secondarySigningCertificate.getPublicKey());
+                    }
+                }};
+            }
+        };
+        SigningCredentialFactory credentialFactory = new SigningCredentialFactory(signingKeyStore);
+        return new CredentialFactorySignatureValidator(credentialFactory);
     }
 
     private MetadataBackedSignatureValidator getMetadataBackedSignatureValidator(MetadataResolver metadataResolver) throws ComponentInitializationException {

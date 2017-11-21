@@ -37,7 +37,8 @@ public class VerifyServiceProviderFactory {
         this.configuration = configuration;
         this.responseFactory = new ResponseFactory(
             configuration.getSamlPrimaryEncryptionKey(),
-            configuration.getSamlSecondaryEncryptionKey());
+            configuration.getSamlSecondaryEncryptionKey()
+        );
         this.dateTimeComparator = new DateTimeComparator(configuration.getClockSkew());
         this.entityIdService = new EntityIdService(configuration.getServiceEntityIds());
         this.manifestReader = new ManifestReader();
@@ -83,7 +84,7 @@ public class VerifyServiceProviderFactory {
         return new TranslateSamlResponseResource(
             responseFactory.createResponseService(
                 getHubMetadataResolver(),
-                responseFactory.createAssertionTranslator(getMsaMetadataResolver(), dateTimeComparator),
+                responseFactory.createAssertionTranslator(getMsaMetadataResolver(), configuration.getMsaConfiguration(), dateTimeComparator),
                 dateTimeComparator
             ),
             entityIdService

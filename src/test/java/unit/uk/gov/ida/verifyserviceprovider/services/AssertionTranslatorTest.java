@@ -20,15 +20,21 @@ import uk.gov.ida.saml.core.test.builders.AssertionBuilder;
 import uk.gov.ida.saml.core.test.builders.ConditionsBuilder;
 import uk.gov.ida.saml.core.test.builders.SubjectBuilder;
 import uk.gov.ida.saml.core.validation.SamlTransformationErrorException;
+import uk.gov.ida.verifyserviceprovider.configuration.MsaConfiguration;
 import uk.gov.ida.verifyserviceprovider.dto.TranslatedResponseBody;
 import uk.gov.ida.verifyserviceprovider.exceptions.SamlResponseValidationException;
 import uk.gov.ida.verifyserviceprovider.factories.saml.ResponseFactory;
 import uk.gov.ida.verifyserviceprovider.services.AssertionTranslator;
 import uk.gov.ida.verifyserviceprovider.utils.DateTimeComparator;
 
+import java.io.ByteArrayInputStream;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.util.Base64;
 import java.util.Collections;
 
+import static java.text.MessageFormat.format;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -61,8 +67,10 @@ public class AssertionTranslatorTest {
     private static final String IN_RESPONSE_TO = "_some-request-id";
     private static final String VERIFY_SERVICE_PROVIDER_ENTITY_ID = "default-entity-id";
     private AssertionTranslator translator;
-    private Credential testRpMsaSigningCredential =
-        new TestCredentialFactory(TEST_RP_MS_PUBLIC_SIGNING_CERT, TEST_RP_MS_PRIVATE_SIGNING_KEY).getSigningCredential();
+    private Credential testRpMsaSigningCredential = new TestCredentialFactory(
+        TEST_RP_MS_PUBLIC_SIGNING_CERT,
+        TEST_RP_MS_PRIVATE_SIGNING_KEY
+    ).getSigningCredential();
 
     @Before
     public void setUp() throws Exception {
@@ -77,11 +85,21 @@ public class AssertionTranslatorTest {
                 .build())
             .build();
 
+        String certificateString = format(
+            "-----BEGIN CERTIFICATE-----\n{0}\n-----END CERTIFICATE-----",
+            TEST_RP_MS_PUBLIC_SIGNING_CERT
+        );
+
+        Certificate certificate = CertificateFactory.getInstance("X.509")
+            .generateCertificate(new ByteArrayInputStream(certificateString.getBytes()));
+
         MetadataResolver msaMetadataResolver = mock(MetadataResolver.class);
+        MsaConfiguration msaConfiguration = mock(MsaConfiguration.class);
         DateTimeComparator dateTimeComparator = new DateTimeComparator(Duration.standardSeconds(5));
         when(msaMetadataResolver.resolve(any())).thenReturn(ImmutableList.of(entityDescriptor));
+        when(msaConfiguration.getPrimarySigningCertificate()).thenReturn(certificate);
 
-        translator = responseFactory.createAssertionTranslator(msaMetadataResolver, dateTimeComparator);
+        translator = responseFactory.createAssertionTranslator(msaMetadataResolver, msaConfiguration, dateTimeComparator);
     }
 
     @Rule
