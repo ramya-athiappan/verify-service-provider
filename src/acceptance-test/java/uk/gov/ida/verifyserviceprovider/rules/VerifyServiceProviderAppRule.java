@@ -26,13 +26,7 @@ public class VerifyServiceProviderAppRule extends DropwizardAppRule<VerifyServic
             ConfigOverride.config("verifyHubConfiguration.environment", "COMPLIANCE_TOOL"),
             ConfigOverride.config("samlPrimaryEncryptionKey", TEST_RP_PRIVATE_ENCRYPTION_KEY),
             ConfigOverride.config("samlSecondaryEncryptionKey", secondaryEncryptionKey),
-            ConfigOverride.config("msaConfiguration.primarySigningCertificate", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes())),
-            ConfigOverride.config("msaMetadata.uri", () -> {
-                IdaSamlBootstrap.bootstrap();
-                msaServer.serveDefaultMetadata();
-                return msaServer.getUri();
-            }),
-            ConfigOverride.config("msaMetadata.expectedEntityId", MockMsaServer.MSA_ENTITY_ID)
+            ConfigOverride.config("msaConfiguration.primarySigningCertificate", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()))
         );
     }
 

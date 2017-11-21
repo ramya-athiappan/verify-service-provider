@@ -31,7 +31,6 @@ import java.io.ByteArrayInputStream;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
-import java.util.Base64;
 import java.util.Collections;
 
 import static java.text.MessageFormat.format;
@@ -99,7 +98,7 @@ public class AssertionTranslatorTest {
         when(msaMetadataResolver.resolve(any())).thenReturn(ImmutableList.of(entityDescriptor));
         when(msaConfiguration.getPrimarySigningCertificate()).thenReturn(certificate);
 
-        translator = responseFactory.createAssertionTranslator(msaMetadataResolver, msaConfiguration, dateTimeComparator);
+        translator = responseFactory.createAssertionTranslator(msaConfiguration, dateTimeComparator);
     }
 
     @Rule

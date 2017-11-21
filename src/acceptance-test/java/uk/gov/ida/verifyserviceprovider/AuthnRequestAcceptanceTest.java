@@ -41,8 +41,6 @@ public class AuthnRequestAcceptanceTest {
         ConfigOverride.config("samlSigningKey", TEST_RP_PRIVATE_SIGNING_KEY),
         ConfigOverride.config("verifyHubConfiguration.environment", "COMPLIANCE_TOOL"),
         ConfigOverride.config("serviceEntityIds", SINGLE_ENTITY_ID),
-        ConfigOverride.config("msaMetadata.expectedEntityId", "some-msa-expected-entity-id"),
-        ConfigOverride.config("msaMetadata.uri", "http://some-msa-uri"),
         ConfigOverride.config("samlPrimaryEncryptionKey", TEST_RP_PRIVATE_ENCRYPTION_KEY),
         ConfigOverride.config("msaConfiguration.primarySigningCertificate", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()))
     );
@@ -55,12 +53,9 @@ public class AuthnRequestAcceptanceTest {
         ConfigOverride.config("samlSigningKey", TEST_RP_PRIVATE_SIGNING_KEY),
         ConfigOverride.config("verifyHubConfiguration.environment", "COMPLIANCE_TOOL"),
         ConfigOverride.config("serviceEntityIds", String.format("%s,%s", MULTI_ENTITY_ID_1, MULTI_ENTITY_ID_2)),
-        ConfigOverride.config("msaMetadata.expectedEntityId", "some-msa-expected-entity-id"),
-        ConfigOverride.config("msaMetadata.uri", "http://some-msa-uri"),
         ConfigOverride.config("samlPrimaryEncryptionKey", TEST_RP_PRIVATE_ENCRYPTION_KEY),
         ConfigOverride.config("msaConfiguration.primarySigningCertificate", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()))
     );
-
 
     @Test
     public void shouldGenerateValidAuthnRequestUsingDefaultEntityId() throws Exception {

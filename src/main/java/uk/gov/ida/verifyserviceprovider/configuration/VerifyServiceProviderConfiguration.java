@@ -52,11 +52,6 @@ public class VerifyServiceProviderConfiguration extends Configuration {
     @JsonProperty
     @NotNull
     @Valid
-    private MsaMetadataConfiguration msaMetadata;
-
-    @JsonProperty
-    @NotNull
-    @Valid
     private Duration clockSkew;
 
     public List<String> getServiceEntityIds() {
@@ -81,10 +76,6 @@ public class VerifyServiceProviderConfiguration extends Configuration {
 
     public MsaConfiguration getMsaConfiguration() {
         return msaConfiguration;
-    }
-
-    public MsaMetadataConfiguration getMsaMetadata() {
-        return msaMetadata;
     }
 
     public HubMetadataConfiguration getVerifyHubMetadata() {

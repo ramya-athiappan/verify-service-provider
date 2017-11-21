@@ -105,13 +105,9 @@ public class ResponseFactory {
     }
 
     public AssertionTranslator createAssertionTranslator(
-        MetadataResolver msaMetadataResolver,
         MsaConfiguration msaConfiguration,
         DateTimeComparator dateTimeComparator
     ) throws ComponentInitializationException {
-        // TODO: We should have configuration backed signature validator
-//        MetadataBackedSignatureValidator metadataBackedSignatureValidator = getMetadataBackedSignatureValidator(msaMetadataResolver);
-//        SamlMessageSignatureValidator samlMessageSignatureValidator = new SamlMessageSignatureValidator(metadataBackedSignatureValidator);
         SignatureValidator signatureValidator = getCredentialFactorySignatureValidator(msaConfiguration);
         SamlMessageSignatureValidator samlMessageSignatureValidator = new SamlMessageSignatureValidator(signatureValidator);
         TimeRestrictionValidator timeRestrictionValidator = new TimeRestrictionValidator(dateTimeComparator);

@@ -51,13 +51,6 @@ public class VerifyServiceProviderFactory {
         );
     }
 
-    public MetadataHealthCheck getMsaMetadataHealthCheck() {
-        return new MetadataHealthCheck(
-            getMsaMetadataResolver(),
-            configuration.getMsaMetadata().getExpectedEntityId()
-        );
-    }
-
     public GenerateAuthnRequestResource getGenerateAuthnRequestResource() throws Exception {
         MetadataPublicKeyExtractor metadataPublicKeyExtractor = new MetadataPublicKeyExtractor(
             configuration.getVerifyHubMetadata().getExpectedEntityId(),
@@ -84,7 +77,7 @@ public class VerifyServiceProviderFactory {
         return new TranslateSamlResponseResource(
             responseFactory.createResponseService(
                 getHubMetadataResolver(),
-                responseFactory.createAssertionTranslator(getMsaMetadataResolver(), configuration.getMsaConfiguration(), dateTimeComparator),
+                responseFactory.createAssertionTranslator(configuration.getMsaConfiguration(), dateTimeComparator),
                 dateTimeComparator
             ),
             entityIdService
@@ -102,19 +95,6 @@ public class VerifyServiceProviderFactory {
                 resolver = hubMetadataResolver;
                 if (resolver == null) {
                     hubMetadataResolver = resolver = metadataResolverFactory.createMetadataResolver(environment, configuration.getVerifyHubMetadata());
-                }
-            }
-        }
-        return resolver;
-    }
-
-    private MetadataResolver getMsaMetadataResolver() {
-        MetadataResolver resolver = msaMetadataResolver;
-        if (resolver == null) {
-            synchronized (this) {
-                resolver = msaMetadataResolver;
-                if (resolver == null) {
-                    msaMetadataResolver = resolver = metadataResolverFactory.createMetadataResolverWithoutSignatureValidation(environment, configuration.getMsaMetadata());
                 }
             }
         }

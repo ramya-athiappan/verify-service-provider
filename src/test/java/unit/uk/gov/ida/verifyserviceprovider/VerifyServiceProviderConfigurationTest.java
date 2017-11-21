@@ -48,8 +48,6 @@ public class VerifyServiceProviderConfigurationTest {
             put("PORT", "50555");
             put("LOG_LEVEL", "ERROR");
             put("VERIFY_ENVIRONMENT", "COMPLIANCE_TOOL");
-            put("MSA_METADATA_URL", "some-msa-metadata-url");
-            put("MSA_ENTITY_ID", "some-msa-entity-id");
             put("SERVICE_ENTITY_IDS", "[\"http://some-service-entity-id\"]");
             put("SAML_SIGNING_KEY", TEST_RP_PRIVATE_SIGNING_KEY);
             put("SAML_PRIMARY_ENCRYPTION_KEY", TEST_RP_PRIVATE_ENCRYPTION_KEY);
@@ -74,7 +72,6 @@ public class VerifyServiceProviderConfigurationTest {
         expectedException.expectMessage(containsString("samlSigningKey may not be null"));
         expectedException.expectMessage(containsString("samlPrimaryEncryptionKey may not be null"));
         expectedException.expectMessage(containsString("verifyHubConfiguration may not be null"));
-        expectedException.expectMessage(containsString("msaMetadata may not be null"));
 
         factory.build(new StringConfigurationSourceProvider("server: "), "");
     }

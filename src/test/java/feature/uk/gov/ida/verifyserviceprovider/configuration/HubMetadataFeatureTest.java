@@ -49,8 +49,6 @@ public class HubMetadataFeatureTest {
 
     private static WireMockServer wireMockServer = new WireMockServer(wireMockConfig().dynamicPort());
 
-    @ClassRule
-    public static MockMsaServer msaServer = new MockMsaServer();
     private DropwizardTestSupport<VerifyServiceProviderConfiguration> applicationTestSupport;
 
     @Before
@@ -64,8 +62,6 @@ public class HubMetadataFeatureTest {
             "verify-service-provider.yml",
             config("verifyHubConfiguration.environment", "COMPLIANCE_TOOL"),
             config("verifyHubConfiguration.metadata.uri", () -> String.format("http://localhost:%s/SAML2/metadata", wireMockServer.port())),
-            config("msaMetadata.uri", msaServer::getUri),
-            config("msaMetadata.expectedEntityId", MockMsaServer.MSA_ENTITY_ID),
             config("verifyHubConfiguration.metadata.expectedEntityId", HUB_ENTITY_ID),
             config("verifyHubConfiguration.metadata.trustStore.path", verifyHubKeystoreResource.getAbsolutePath()),
             config("verifyHubConfiguration.metadata.trustStore.password", verifyHubKeystoreResource.getPassword()),
@@ -77,7 +73,6 @@ public class HubMetadataFeatureTest {
 
         IdaSamlBootstrap.bootstrap();
         wireMockServer.start();
-        msaServer.serveDefaultMetadata();
     }
 
     @After
