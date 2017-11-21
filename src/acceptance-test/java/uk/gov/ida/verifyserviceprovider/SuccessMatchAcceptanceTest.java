@@ -1,7 +1,6 @@
 package uk.gov.ida.verifyserviceprovider;
 
 import com.google.common.collect.ImmutableMap;
-import common.uk.gov.ida.verifyserviceprovider.servers.MockMsaServer;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -30,10 +29,7 @@ public class SuccessMatchAcceptanceTest {
     private static String configuredEntityId = "http://verify-service-provider";
 
     @ClassRule
-    public static MockMsaServer msaServer = new MockMsaServer();
-
-    @ClassRule
-    public static VerifyServiceProviderAppRule application = new VerifyServiceProviderAppRule(msaServer, configuredEntityId);
+    public static VerifyServiceProviderAppRule application = new VerifyServiceProviderAppRule(configuredEntityId);
 
     private static Client client = application.client();
     private static ComplianceToolService complianceTool = new ComplianceToolService(client);
@@ -100,23 +96,23 @@ public class SuccessMatchAcceptanceTest {
     public void shouldHandleLoA1SuccessMatchResponse() {
         RequestResponseBody requestResponseBody = generateRequestService.generateAuthnRequest(application.getLocalPort());
         Map<String, String> translateResponseRequestData = ImmutableMap.of(
-                "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA1_ID),
-                "requestId", requestResponseBody.getRequestId(),
-                "levelOfAssurance", LEVEL_1.name()
+            "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA1_ID),
+            "requestId", requestResponseBody.getRequestId(),
+            "levelOfAssurance", LEVEL_1.name()
         );
 
         Response response = client
-                .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
-                .request()
-                .buildPost(json(translateResponseRequestData))
-                .invoke();
+            .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
+            .request()
+            .buildPost(json(translateResponseRequestData))
+            .invoke();
 
         assertThat(response.getStatus()).isEqualTo(OK.getStatusCode());
         assertThat(response.readEntity(TranslatedResponseBody.class)).isEqualTo(new TranslatedResponseBody(
-                SUCCESS_MATCH,
-                "some-expected-pid",
-                LEVEL_1,
-                null)
+            SUCCESS_MATCH,
+            "some-expected-pid",
+            LEVEL_1,
+            null)
         );
     }
 

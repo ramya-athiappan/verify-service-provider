@@ -1,7 +1,6 @@
 package uk.gov.ida.verifyserviceprovider;
 
 import com.google.common.collect.ImmutableMap;
-import common.uk.gov.ida.verifyserviceprovider.servers.MockMsaServer;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import org.json.JSONObject;
 import org.junit.ClassRule;
@@ -24,6 +23,7 @@ import static javax.ws.rs.core.Response.Status.OK;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.ida.saml.core.test.TestCertificateStrings.TEST_RP_MS_PRIVATE_SIGNING_KEY;
 import static uk.gov.ida.saml.core.test.TestCertificateStrings.TEST_RP_PUBLIC_ENCRYPTION_CERT;
+import static uk.gov.ida.saml.core.test.TestEntityIds.TEST_RP_MS;
 import static uk.gov.ida.verifyserviceprovider.builders.ComplianceToolInitialisationRequestBuilder.aComplianceToolInitialisationRequest;
 import static uk.gov.ida.verifyserviceprovider.dto.LevelOfAssurance.LEVEL_1;
 import static uk.gov.ida.verifyserviceprovider.dto.LevelOfAssurance.LEVEL_2;
@@ -34,10 +34,7 @@ import static uk.gov.ida.verifyserviceprovider.services.ComplianceToolService.AC
 public class UserAccountCreationResponseAcceptanceTest {
 
     @ClassRule
-    public static MockMsaServer msaServer = new MockMsaServer();
-
-    @ClassRule
-    public static VerifyServiceProviderAppRule application = new VerifyServiceProviderAppRule(msaServer);
+    public static VerifyServiceProviderAppRule application = new VerifyServiceProviderAppRule();
 
     private static Client client = application.client();
     private static ComplianceToolService complianceTool = new ComplianceToolService(client);
@@ -131,7 +128,7 @@ public class UserAccountCreationResponseAcceptanceTest {
         complianceTool.initialiseWith(
             aComplianceToolInitialisationRequest()
                 .withMatchingServiceSigningPrivateKey(TEST_RP_MS_PRIVATE_SIGNING_KEY)
-                .withMatchingServiceEntityId(MockMsaServer.MSA_ENTITY_ID)
+                .withMatchingServiceEntityId(TEST_RP_MS)
                 .withEncryptionCertificate(TEST_RP_PUBLIC_ENCRYPTION_CERT)
                 .withExpectedPid("some-expected-pid")
                 .withUserAccountCreationAttributes(Arrays.asList(attributes))

@@ -92,10 +92,8 @@ public class AssertionTranslatorTest {
         Certificate certificate = CertificateFactory.getInstance("X.509")
             .generateCertificate(new ByteArrayInputStream(certificateString.getBytes()));
 
-        MetadataResolver msaMetadataResolver = mock(MetadataResolver.class);
         MsaConfiguration msaConfiguration = mock(MsaConfiguration.class);
         DateTimeComparator dateTimeComparator = new DateTimeComparator(Duration.standardSeconds(5));
-        when(msaMetadataResolver.resolve(any())).thenReturn(ImmutableList.of(entityDescriptor));
         when(msaConfiguration.getPrimarySigningCertificate()).thenReturn(certificate);
 
         translator = responseFactory.createAssertionTranslator(msaConfiguration, dateTimeComparator);

@@ -24,7 +24,6 @@ public class VerifyServiceProviderFactory {
     private final ResponseFactory responseFactory;
 
     private volatile MetadataResolver hubMetadataResolver;
-    private volatile MetadataResolver msaMetadataResolver;
     private final DateTimeComparator dateTimeComparator;
     private final EntityIdService entityIdService;
     private final ManifestReader manifestReader;

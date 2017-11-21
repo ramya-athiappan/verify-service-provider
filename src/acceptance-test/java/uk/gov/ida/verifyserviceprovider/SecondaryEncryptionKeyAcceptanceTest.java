@@ -1,7 +1,6 @@
 package uk.gov.ida.verifyserviceprovider;
 
 import com.google.common.collect.ImmutableMap;
-import common.uk.gov.ida.verifyserviceprovider.servers.MockMsaServer;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -28,10 +27,7 @@ import static uk.gov.ida.verifyserviceprovider.services.ComplianceToolService.BA
 public class SecondaryEncryptionKeyAcceptanceTest {
 
     @ClassRule
-    public static MockMsaServer msaServer = new MockMsaServer();
-
-    @ClassRule
-    public static VerifyServiceProviderAppRule application = new VerifyServiceProviderAppRule(msaServer, TEST_RP_MS_PRIVATE_ENCRYPTION_KEY, "http://verify-service-provider");
+    public static VerifyServiceProviderAppRule application = new VerifyServiceProviderAppRule(TEST_RP_MS_PRIVATE_ENCRYPTION_KEY, "http://verify-service-provider");
 
     private static Client client = application.client();
     private static ComplianceToolService complianceTool = new ComplianceToolService(client);
@@ -40,7 +36,7 @@ public class SecondaryEncryptionKeyAcceptanceTest {
     @Before
     public void setUp() {
         complianceTool.initialiseWith(
-                aComplianceToolInitialisationRequest()
+            aComplianceToolInitialisationRequest()
                 .withEncryptionCertificate(TEST_RP_MS_PUBLIC_ENCRYPTION_CERT)
                 .build()
         );
@@ -50,23 +46,23 @@ public class SecondaryEncryptionKeyAcceptanceTest {
     public void shouldHandleASuccessMatchResponseSignedWithSecondaryKey() {
         RequestResponseBody requestResponseBody = generateRequestService.generateAuthnRequest(application.getLocalPort());
         Map<String, String> translateResponseRequestData = ImmutableMap.of(
-                "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID),
-                "requestId", requestResponseBody.getRequestId(),
-                "levelOfAssurance", LEVEL_2.name()
+            "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID),
+            "requestId", requestResponseBody.getRequestId(),
+            "levelOfAssurance", LEVEL_2.name()
         );
 
         Response response = client
-                .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
-                .request()
-                .buildPost(json(translateResponseRequestData))
-                .invoke();
+            .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
+            .request()
+            .buildPost(json(translateResponseRequestData))
+            .invoke();
 
         assertThat(response.getStatus()).isEqualTo(OK.getStatusCode());
         assertThat(response.readEntity(TranslatedResponseBody.class)).isEqualTo(new TranslatedResponseBody(
-                SUCCESS_MATCH,
-                "default-expected-pid",
-                LEVEL_2,
-                null)
+            SUCCESS_MATCH,
+            "default-expected-pid",
+            LEVEL_2,
+            null)
         );
     }
 }

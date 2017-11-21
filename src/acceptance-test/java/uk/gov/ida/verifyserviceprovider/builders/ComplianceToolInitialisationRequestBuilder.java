@@ -1,7 +1,5 @@
 package uk.gov.ida.verifyserviceprovider.builders;
 
-import common.uk.gov.ida.verifyserviceprovider.servers.MockMsaServer;
-
 import javax.ws.rs.client.Entity;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +8,7 @@ import static java.util.Collections.emptyList;
 import static uk.gov.ida.saml.core.test.TestCertificateStrings.TEST_RP_MS_PRIVATE_SIGNING_KEY;
 import static uk.gov.ida.saml.core.test.TestCertificateStrings.TEST_RP_PUBLIC_ENCRYPTION_CERT;
 import static uk.gov.ida.saml.core.test.TestCertificateStrings.TEST_RP_PUBLIC_SIGNING_CERT;
+import static uk.gov.ida.saml.core.test.TestEntityIds.TEST_RP_MS;
 
 public class ComplianceToolInitialisationRequestBuilder {
 
@@ -18,7 +17,7 @@ public class ComplianceToolInitialisationRequestBuilder {
     private String signingCertificate = TEST_RP_PUBLIC_SIGNING_CERT;
     private String encryptionCertificate = TEST_RP_PUBLIC_ENCRYPTION_CERT;
     private String expectedPID = "default-expected-pid";
-    private String matchingServiceEntityId = MockMsaServer.MSA_ENTITY_ID;
+    private String matchingServiceEntityId = TEST_RP_MS;
     private String matchingServiceSigningPrivateKey = TEST_RP_MS_PRIVATE_SIGNING_KEY;
     private List<String> userAccountCreationAttributes = emptyList();
 

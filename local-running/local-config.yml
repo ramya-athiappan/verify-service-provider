@@ -35,9 +35,9 @@ verifyHubConfiguration:
     uri: ${METADATA_URL}
     expectedEntityId: https://dev-hub.local
 
-msaMetadata:
-  uri: http://localhost:${TEST_RP_MSA_PORT}/matching-service/SAML2/metadata
-  expectedEntityId: ${IDA_TESTRP_MSA_ENTITYID:-"http://dev-rp-ms.local/SAML2/MD"}
+msaConfiguration:
+  primarySigningCertificate: ${MSA_PRIMARY_SIGNING_CERTIFICATE:-}
+  secondarySigningCertificate: ${MSA_SECONDARY_SIGNING_CERTIFICATE:-}
 
 samlSigningKey: ${SAML_SIGNING_KEY:-}
 

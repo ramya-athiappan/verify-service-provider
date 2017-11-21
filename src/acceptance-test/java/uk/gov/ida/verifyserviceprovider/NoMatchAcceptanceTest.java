@@ -1,7 +1,6 @@
 package uk.gov.ida.verifyserviceprovider;
 
 import com.google.common.collect.ImmutableMap;
-import common.uk.gov.ida.verifyserviceprovider.servers.MockMsaServer;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -25,10 +24,7 @@ import static uk.gov.ida.verifyserviceprovider.services.ComplianceToolService.BA
 public class NoMatchAcceptanceTest {
 
     @ClassRule
-    public static MockMsaServer msaServer = new MockMsaServer();
-
-    @ClassRule
-    public static VerifyServiceProviderAppRule application = new VerifyServiceProviderAppRule(msaServer);
+    public static VerifyServiceProviderAppRule application = new VerifyServiceProviderAppRule();
 
     private static Client client = application.client();
     private static ComplianceToolService complianceTool = new ComplianceToolService(client);

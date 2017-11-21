@@ -1,13 +1,11 @@
 package feature.uk.gov.ida.verifyserviceprovider.configuration;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import common.uk.gov.ida.verifyserviceprovider.servers.MockMsaServer;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.DropwizardTestSupport;
 import keystore.KeyStoreResource;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.opensaml.xmlsec.algorithm.descriptors.DigestMD5;
 import org.opensaml.xmlsec.signature.Signature;
