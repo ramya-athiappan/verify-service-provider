@@ -47,6 +47,11 @@ public class VerifyServiceProviderConfiguration extends Configuration {
     @JsonProperty
     @NotNull
     @Valid
+    private MsaConfiguration msaConfiguration;
+
+    @JsonProperty
+    @NotNull
+    @Valid
     private MsaMetadataConfiguration msaMetadata;
 
     @JsonProperty
@@ -72,6 +77,10 @@ public class VerifyServiceProviderConfiguration extends Configuration {
 
     public PrivateKey getSamlSecondaryEncryptionKey() {
         return samlSecondaryEncryptionKey;
+    }
+
+    public MsaConfiguration getMsaConfiguration() {
+        return msaConfiguration;
     }
 
     public MsaMetadataConfiguration getMsaMetadata() {

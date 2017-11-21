@@ -13,12 +13,13 @@ import uk.gov.ida.verifyserviceprovider.VerifyServiceProviderApplication;
 import uk.gov.ida.verifyserviceprovider.configuration.HubEnvironment;
 import uk.gov.ida.verifyserviceprovider.configuration.VerifyServiceProviderConfiguration;
 
+import java.util.Base64;
 import java.util.HashMap;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static keystore.builders.KeyStoreResourceBuilder.aKeyStoreResource;
 import static org.apache.xml.security.utils.Base64.decode;
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.ida.saml.core.test.TestCertificateStrings.TEST_RP_MS_PUBLIC_SIGNING_CERT;
 import static uk.gov.ida.saml.core.test.TestCertificateStrings.TEST_RP_PRIVATE_ENCRYPTION_KEY;
 import static uk.gov.ida.saml.core.test.TestCertificateStrings.TEST_RP_PRIVATE_SIGNING_KEY;
 import static uk.gov.ida.saml.core.test.builders.CertificateBuilder.aCertificate;
@@ -61,6 +62,8 @@ public class ApplicationConfigurationFeatureTests {
             put("SAML_SIGNING_KEY", TEST_RP_PRIVATE_SIGNING_KEY);
             put("SAML_PRIMARY_ENCRYPTION_KEY", TEST_RP_PRIVATE_ENCRYPTION_KEY);
             put("SAML_SECONDARY_ENCRYPTION_KEY", TEST_RP_PRIVATE_ENCRYPTION_KEY);
+            put("MSA_PRIMARY_SIGNING_CERTIFICATE", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()));
+            put("MSA_SECONDARY_SIGNING_CERTIFICATE", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()));
             put("CLOCK_SKEW", "PT5s");
         }});
 
@@ -79,6 +82,8 @@ public class ApplicationConfigurationFeatureTests {
         assertThat(configuration.getSamlSigningKey().getEncoded()).isEqualTo(decode(TEST_RP_PRIVATE_SIGNING_KEY));
         assertThat(configuration.getSamlPrimaryEncryptionKey().getEncoded()).isEqualTo(decode(TEST_RP_PRIVATE_ENCRYPTION_KEY));
         assertThat(configuration.getSamlSecondaryEncryptionKey().getEncoded()).isEqualTo(decode(TEST_RP_PRIVATE_ENCRYPTION_KEY));
+        assertThat(configuration.getMsaConfiguration().getPrimarySigningCertificate().getEncoded()).isEqualTo(decode(TEST_RP_MS_PUBLIC_SIGNING_CERT));
+        assertThat(configuration.getMsaConfiguration().getSecondarySigningCertificate().getEncoded()).isEqualTo(decode(TEST_RP_MS_PUBLIC_SIGNING_CERT));
         assertThat(configuration.getClockSkew()).isEqualTo(Duration.standardSeconds(5));
     }
 
@@ -94,6 +99,8 @@ public class ApplicationConfigurationFeatureTests {
             put("SAML_SIGNING_KEY", TEST_RP_PRIVATE_SIGNING_KEY);
             put("SAML_PRIMARY_ENCRYPTION_KEY", TEST_RP_PRIVATE_ENCRYPTION_KEY);
             put("SAML_SECONDARY_ENCRYPTION_KEY", TEST_RP_PRIVATE_ENCRYPTION_KEY);
+            put("MSA_PRIMARY_SIGNING_CERTIFICATE", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()));
+            put("MSA_SECONDARY_SIGNING_CERTIFICATE", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()));
             put("CLOCK_SKEW", "PT5s");
         }});
 
@@ -112,6 +119,8 @@ public class ApplicationConfigurationFeatureTests {
         assertThat(configuration.getSamlSigningKey().getEncoded()).isEqualTo(decode(TEST_RP_PRIVATE_SIGNING_KEY));
         assertThat(configuration.getSamlPrimaryEncryptionKey().getEncoded()).isEqualTo(decode(TEST_RP_PRIVATE_ENCRYPTION_KEY));
         assertThat(configuration.getSamlSecondaryEncryptionKey().getEncoded()).isEqualTo(decode(TEST_RP_PRIVATE_ENCRYPTION_KEY));
+        assertThat(configuration.getMsaConfiguration().getPrimarySigningCertificate().getEncoded()).isEqualTo(decode(TEST_RP_MS_PUBLIC_SIGNING_CERT));
+        assertThat(configuration.getMsaConfiguration().getSecondarySigningCertificate().getEncoded()).isEqualTo(decode(TEST_RP_MS_PUBLIC_SIGNING_CERT));
         assertThat(configuration.getClockSkew()).isEqualTo(Duration.standardSeconds(5));
     }
 }

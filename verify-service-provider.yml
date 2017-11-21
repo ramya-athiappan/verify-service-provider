@@ -52,3 +52,10 @@ samlPrimaryEncryptionKey: ${SAML_PRIMARY_ENCRYPTION_KEY:-}
 # Secondary private key used to decrypt Assertions in the Response
 # This only needs to be set if during key rotations (for example if your primary encryption certificate is about to expire)
 samlSecondaryEncryptionKey: ${SAML_SECONDARY_ENCRYPTION_KEY:-}
+
+# Configuration for MSA. Contains:
+#   - primary signing certificate: used to validate signatures on Assertions in the Response
+#   - secondary signing certificate: used to validate signatures on Assertions in the Response
+msaConfiguration:
+  primarySigningCertificate: ${MSA_PRIMARY_SIGNING_CERTIFICATE:-}
+  secondarySigningCertificate: ${MSA_SECONDARY_SIGNING_CERTIFICATE:-}
