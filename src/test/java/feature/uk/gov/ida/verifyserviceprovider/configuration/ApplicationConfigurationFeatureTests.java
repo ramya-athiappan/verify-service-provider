@@ -13,7 +13,6 @@ import uk.gov.ida.verifyserviceprovider.VerifyServiceProviderApplication;
 import uk.gov.ida.verifyserviceprovider.configuration.HubEnvironment;
 import uk.gov.ida.verifyserviceprovider.configuration.VerifyServiceProviderConfiguration;
 
-import java.util.Base64;
 import java.util.HashMap;
 
 import static keystore.builders.KeyStoreResourceBuilder.aKeyStoreResource;
@@ -60,8 +59,8 @@ public class ApplicationConfigurationFeatureTests {
             put("SAML_SIGNING_KEY", TEST_RP_PRIVATE_SIGNING_KEY);
             put("SAML_PRIMARY_ENCRYPTION_KEY", TEST_RP_PRIVATE_ENCRYPTION_KEY);
             put("SAML_SECONDARY_ENCRYPTION_KEY", TEST_RP_PRIVATE_ENCRYPTION_KEY);
-            put("MSA_PRIMARY_SIGNING_CERTIFICATE", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()));
-            put("MSA_SECONDARY_SIGNING_CERTIFICATE", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()));
+            put("MSA_PRIMARY_SIGNING_CERTIFICATE", TEST_RP_MS_PUBLIC_SIGNING_CERT.replaceAll("\n", ""));
+            put("MSA_SECONDARY_SIGNING_CERTIFICATE", TEST_RP_MS_PUBLIC_SIGNING_CERT.replaceAll("\n", ""));
             put("CLOCK_SKEW", "PT5s");
         }});
 
@@ -93,8 +92,8 @@ public class ApplicationConfigurationFeatureTests {
             put("SAML_SIGNING_KEY", TEST_RP_PRIVATE_SIGNING_KEY);
             put("SAML_PRIMARY_ENCRYPTION_KEY", TEST_RP_PRIVATE_ENCRYPTION_KEY);
             put("SAML_SECONDARY_ENCRYPTION_KEY", TEST_RP_PRIVATE_ENCRYPTION_KEY);
-            put("MSA_PRIMARY_SIGNING_CERTIFICATE", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()));
-            put("MSA_SECONDARY_SIGNING_CERTIFICATE", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()));
+            put("MSA_PRIMARY_SIGNING_CERTIFICATE", TEST_RP_MS_PUBLIC_SIGNING_CERT.replaceAll("\n", ""));
+            put("MSA_SECONDARY_SIGNING_CERTIFICATE", TEST_RP_MS_PUBLIC_SIGNING_CERT.replaceAll("\n", ""));
             put("CLOCK_SKEW", "PT5s");
         }});
 

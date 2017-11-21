@@ -21,7 +21,6 @@ import uk.gov.ida.verifyserviceprovider.configuration.VerifyServiceProviderConfi
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.util.Base64;
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -66,7 +65,7 @@ public class HubMetadataFeatureTest {
             config("serviceEntityIds", "[\"http://some-service-entity-id\"]"),
             config("samlSigningKey", TEST_RP_PRIVATE_SIGNING_KEY),
             config("samlPrimaryEncryptionKey", TEST_RP_PRIVATE_ENCRYPTION_KEY),
-            config("msaConfiguration.primarySigningCertificate", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()))
+            config("msaConfiguration.primarySigningCertificate", TEST_RP_MS_PUBLIC_SIGNING_CERT.replaceAll("\n", ""))
         );
 
         IdaSamlBootstrap.bootstrap();
@@ -112,16 +111,16 @@ public class HubMetadataFeatureTest {
             .withDigestAlgorithm(id, new DigestMD5())
             .withX509Data(TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT)
             .withSigningCredential(new TestCredentialFactory(TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT,
-                    TestCertificateStrings.METADATA_SIGNING_A_PRIVATE_KEY).getSigningCredential()).build();
+                TestCertificateStrings.METADATA_SIGNING_A_PRIVATE_KEY).getSigningCredential()).build();
         String metadata = new MetadataFactory().metadata(new EntitiesDescriptorFactory().signedEntitiesDescriptor(id, signature));
 
         wireMockServer.stubFor(
-                get(urlEqualTo("/SAML2/metadata"))
-                        .willReturn(
-                                aResponse()
-                                        .withStatus(200)
-                                        .withBody(metadata)
-                        )
+            get(urlEqualTo("/SAML2/metadata"))
+                .willReturn(
+                    aResponse()
+                        .withStatus(200)
+                        .withBody(metadata)
+                )
         );
 
         applicationTestSupport.before();

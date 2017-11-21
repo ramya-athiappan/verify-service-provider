@@ -21,13 +21,9 @@ public class CertificateDeserializer extends JsonDeserializer<Certificate> {
         jsonParser.setCodec(OBJECT_MAPPER);
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
 
-        String certificateString = format(
-            "-----BEGIN CERTIFICATE-----\n{0}\n-----END CERTIFICATE-----",
-            new String(Base64.getDecoder().decode(node.asText()))
-        );
         try {
             return CertificateFactory.getInstance("X.509")
-                .generateCertificate(new ByteArrayInputStream(certificateString.getBytes()));
+                .generateCertificate(new ByteArrayInputStream(Base64.getDecoder().decode(node.asText())));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

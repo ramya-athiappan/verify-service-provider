@@ -16,7 +16,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.util.Base64;
 
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.OK;
@@ -42,7 +41,7 @@ public class AuthnRequestAcceptanceTest {
         ConfigOverride.config("verifyHubConfiguration.environment", "COMPLIANCE_TOOL"),
         ConfigOverride.config("serviceEntityIds", SINGLE_ENTITY_ID),
         ConfigOverride.config("samlPrimaryEncryptionKey", TEST_RP_PRIVATE_ENCRYPTION_KEY),
-        ConfigOverride.config("msaConfiguration.primarySigningCertificate", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()))
+        ConfigOverride.config("msaConfiguration.primarySigningCertificate", TEST_RP_MS_PUBLIC_SIGNING_CERT.replaceAll("\n", ""))
     );
 
     public static final DropwizardTestSupport<VerifyServiceProviderConfiguration> multiTenantApplication = new DropwizardTestSupport<>(
@@ -54,7 +53,7 @@ public class AuthnRequestAcceptanceTest {
         ConfigOverride.config("verifyHubConfiguration.environment", "COMPLIANCE_TOOL"),
         ConfigOverride.config("serviceEntityIds", String.format("%s,%s", MULTI_ENTITY_ID_1, MULTI_ENTITY_ID_2)),
         ConfigOverride.config("samlPrimaryEncryptionKey", TEST_RP_PRIVATE_ENCRYPTION_KEY),
-        ConfigOverride.config("msaConfiguration.primarySigningCertificate", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()))
+        ConfigOverride.config("msaConfiguration.primarySigningCertificate", TEST_RP_MS_PUBLIC_SIGNING_CERT.replaceAll("\n", ""))
     );
 
     @Test

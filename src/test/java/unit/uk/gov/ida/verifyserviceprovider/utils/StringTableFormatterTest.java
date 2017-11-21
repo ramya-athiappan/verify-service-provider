@@ -4,19 +4,20 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import uk.gov.ida.verifyserviceprovider.utils.StringTableFormatter;
 
+import static java.lang.System.lineSeparator;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StringTableFormatterTest {
 
     @Test
     public void shouldFormatTableToString() {
-        String expected = System.lineSeparator() +
-            "=====" + System.lineSeparator() +
-            "| some-title" + System.lineSeparator() +
-            "-----" + System.lineSeparator() +
-            "| row-1" + System.lineSeparator() +
-            "| row-2" + System.lineSeparator() +
-            "=====" + System.lineSeparator();
+        String expected = lineSeparator() +
+            "=====" + lineSeparator() +
+            "| some-title" + lineSeparator() +
+            "-----" + lineSeparator() +
+            "| row-1" + lineSeparator() +
+            "| row-2" + lineSeparator() +
+            "=====" + lineSeparator();
 
         String actual = StringTableFormatter.format(
             5,

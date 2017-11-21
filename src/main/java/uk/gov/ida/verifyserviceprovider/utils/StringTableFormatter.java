@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
+import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.joining;
 
 public class StringTableFormatter {
@@ -19,11 +20,11 @@ public class StringTableFormatter {
     }
 
     private static String formatTitle(int tableWidth, String title) {
-        String tableTopBorder = StringUtils.repeat(TABLE_LINE_BORDER, tableWidth) + System.lineSeparator();
-        String tableTitleRow = TABLE_SIDE_BORDER + " " + title + System.lineSeparator();
-        String tableTitleBottomBorder = StringUtils.repeat(TABLE_TITLE_SEPARATOR, tableWidth) + System.lineSeparator();
+        String tableTopBorder = StringUtils.repeat(TABLE_LINE_BORDER, tableWidth) + lineSeparator();
+        String tableTitleRow = TABLE_SIDE_BORDER + " " + title + lineSeparator();
+        String tableTitleBottomBorder = StringUtils.repeat(TABLE_TITLE_SEPARATOR, tableWidth) + lineSeparator();
 
-        return System.lineSeparator() +
+        return lineSeparator() +
             tableTopBorder +
             tableTitleRow +
             tableTitleBottomBorder;
@@ -32,12 +33,12 @@ public class StringTableFormatter {
     private static String formatBody(List<String> rowsData) {
         String rowsLines = rowsData.stream()
             .map(item -> TABLE_SIDE_BORDER + " " + item)
-            .collect(joining(System.lineSeparator()));
+            .collect(joining(lineSeparator()));
 
-        return rowsLines + System.lineSeparator();
+        return rowsLines + lineSeparator();
     }
 
     private static String formatBottomBorder(int tableWidth) {
-        return StringUtils.repeat(TABLE_LINE_BORDER, tableWidth) + System.lineSeparator();
+        return StringUtils.repeat(TABLE_LINE_BORDER, tableWidth) + lineSeparator();
     }
 }

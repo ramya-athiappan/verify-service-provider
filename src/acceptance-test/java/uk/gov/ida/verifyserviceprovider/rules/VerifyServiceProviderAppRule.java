@@ -5,8 +5,6 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import uk.gov.ida.verifyserviceprovider.VerifyServiceProviderApplication;
 import uk.gov.ida.verifyserviceprovider.configuration.VerifyServiceProviderConfiguration;
 
-import java.util.Base64;
-
 import static uk.gov.ida.saml.core.test.TestCertificateStrings.TEST_RP_MS_PUBLIC_SIGNING_CERT;
 import static uk.gov.ida.saml.core.test.TestCertificateStrings.TEST_RP_PRIVATE_ENCRYPTION_KEY;
 import static uk.gov.ida.saml.core.test.TestCertificateStrings.TEST_RP_PRIVATE_SIGNING_KEY;
@@ -24,7 +22,7 @@ public class VerifyServiceProviderAppRule extends DropwizardAppRule<VerifyServic
             ConfigOverride.config("verifyHubConfiguration.environment", "COMPLIANCE_TOOL"),
             ConfigOverride.config("samlPrimaryEncryptionKey", TEST_RP_PRIVATE_ENCRYPTION_KEY),
             ConfigOverride.config("samlSecondaryEncryptionKey", secondaryEncryptionKey),
-            ConfigOverride.config("msaConfiguration.primarySigningCertificate", Base64.getEncoder().encodeToString(TEST_RP_MS_PUBLIC_SIGNING_CERT.getBytes()))
+            ConfigOverride.config("msaConfiguration.primarySigningCertificate", TEST_RP_MS_PUBLIC_SIGNING_CERT.replaceAll("\n", ""))
         );
     }
 
