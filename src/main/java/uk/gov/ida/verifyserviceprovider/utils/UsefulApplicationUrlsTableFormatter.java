@@ -16,9 +16,7 @@ import static uk.gov.ida.verifyserviceprovider.utils.ApplicationUrlsGenerator.HE
 public class UsefulApplicationUrlsTableFormatter {
 
     public static String format(Environment environment, Server server) {
-        String startupTableTitle = environment.getName() + " started successfully with the following useful URLs:";
-
-        return StringTableFormatter.format(100, startupTableTitle, extractTableRowsFrom(environment, server));
+        return StringTableFormatter.format(100, "Useful URLs:", extractTableRowsFrom(environment, server));
     }
 
     private static List<String> extractTableRowsFrom(Environment environment, Server server) {

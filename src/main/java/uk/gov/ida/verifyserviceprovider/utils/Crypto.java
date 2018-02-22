@@ -1,9 +1,11 @@
 package uk.gov.ida.verifyserviceprovider.utils;
 
 import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 
 public class Crypto {
@@ -14,9 +16,9 @@ public class Crypto {
             RSAPublicKeySpec keySpec = new RSAPublicKeySpec(rsaPrivateKey.getModulus(), rsaPrivateKey.getPublicExponent());
             return KeyFactory.getInstance("RSA").generatePublic(keySpec);
         } catch (ClassCastException ex) {
-            throw new RuntimeException("Private key must be RSA format");
-        } catch (Exception ex) {
-            throw new RuntimeException("Could not get public key from private key");
+            throw new RuntimeException("Private key must be RSA format", ex);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
+            throw new RuntimeException("Could not get public key from private key", ex);
         }
     }
 }
