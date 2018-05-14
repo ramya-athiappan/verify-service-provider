@@ -23,6 +23,15 @@ case $1 in
 		SERVICE_ENTITY_ID="http://verify-service-provider-dev-service"
 		ASSERTION_CONSUMER_SERVICE_URL="https://passport-verify-stub-relying-party-dev.cloudapps.digital/verify/response"
 		;;
+  	'custom')
+  	    if [ -z "${ASSERTION_CONSUMER_SERVICE_URL}" ] ; then
+  	        echo "the environment variable ASSERTION_CONSUMER_SERVICE_URL must be defined when using a custom environment - exiting"
+  	        exit 1
+        fi
+		echo "configuring compliance tool for Relying Party running on custom environment (e.g. ad-hoc EC2)"
+		SERVICE_ENTITY_ID="${SERVICE_ENTITY_ID:-http://verify-service-provider-custom-service}"
+		ASSERTION_CONSUMER_SERVICE_URL="${ASSERTION_CONSUMER_SERVICE_URL}"
+		;;
 	*)
 		echo "unrecognised environment option: $1 - exiting"
 		exit 1
