@@ -29,7 +29,7 @@ case $1 in
             exit 1
         fi
     echo "configuring compliance tool for Relying Party running on custom environment (e.g. ad-hoc EC2)"
-    SERVICE_ENTITY_ID="${SERVICE_ENTITY_ID:-http://verify-service-provider-custom-service}"
+    SERVICE_ENTITY_ID="${SERVICE_ENTITY_ID:-http://verify-service-provider-local}"
     ASSERTION_CONSUMER_SERVICE_URL="${ASSERTION_CONSUMER_SERVICE_URL}"
     ;;
   *)
