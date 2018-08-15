@@ -50,18 +50,6 @@ public class VerifyServiceProviderFactory {
         this.manifestReader = new ManifestReader();
     }
 
-    private List<KeyPair> getDecryptionKeyPairs(PrivateKey primary, PrivateKey secondary) throws KeyException {
-        if (secondary == null) {
-            return singletonList(createKeyPair(primary));
-        } else {
-            return asList(createKeyPair(primary), createKeyPair(secondary));
-        }
-    }
-
-    private KeyPair createKeyPair(PrivateKey key) throws KeyException {
-        return new KeyPair(KeySupport.derivePublicKey(key), key);
-    }
-
     public MetadataHealthCheck getHubMetadataHealthCheck() {
         return new MetadataHealthCheck(
                 getHubMetadataResolver(),
@@ -111,9 +99,26 @@ public class VerifyServiceProviderFactory {
         return new VersionNumberResource(manifestReader);
     }
 
+    public boolean getRunWithMsa() {
+        return configuration.getRunWithMsa();
+    }
+
+    private List<KeyPair> getDecryptionKeyPairs(PrivateKey primary, PrivateKey secondary) throws KeyException {
+        if (secondary == null) {
+            return singletonList(createKeyPair(primary));
+        } else {
+            return asList(createKeyPair(primary), createKeyPair(secondary));
+        }
+    }
+
+    private KeyPair createKeyPair(PrivateKey key) throws KeyException {
+        return new KeyPair(KeySupport.derivePublicKey(key), key);
+    }
+
     private MetadataResolver getHubMetadataResolver() {
         return verifyMetadataBundler.getMetadataResolver();
     }
+    
     private ExplicitKeySignatureTrustEngine getHubSignatureTrustEngine() {
         return verifyMetadataBundler.getSignatureTrustEngine();
     }

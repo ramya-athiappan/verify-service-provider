@@ -48,6 +48,10 @@ public class VerifyServiceProviderConfiguration extends Configuration {
     @NotNull
     @Valid
     private MsaMetadataConfiguration msaMetadata;
+    
+    @JsonProperty
+    @Valid
+    private boolean runWithMsa;
 
     @JsonProperty
     @NotNull
@@ -84,5 +88,9 @@ public class VerifyServiceProviderConfiguration extends Configuration {
 
     public Duration getClockSkew() {
         return clockSkew;
+    }
+
+    public boolean getRunWithMsa() {
+        return runWithMsa;
     }
 }

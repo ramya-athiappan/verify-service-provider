@@ -61,6 +61,7 @@ public class ApplicationConfigurationFeatureTests {
             put("SAML_PRIMARY_ENCRYPTION_KEY", TEST_RP_PRIVATE_ENCRYPTION_KEY);
             put("SAML_SECONDARY_ENCRYPTION_KEY", TEST_RP_PRIVATE_ENCRYPTION_KEY);
             put("CLOCK_SKEW", "PT30s");
+            put("RUN_WITH_MSA", "true");
         }});
 
         application.getTestSupport().before();
@@ -79,6 +80,7 @@ public class ApplicationConfigurationFeatureTests {
         assertThat(configuration.getSamlPrimaryEncryptionKey().getEncoded()).isEqualTo(decode(TEST_RP_PRIVATE_ENCRYPTION_KEY));
         assertThat(configuration.getSamlSecondaryEncryptionKey().getEncoded()).isEqualTo(decode(TEST_RP_PRIVATE_ENCRYPTION_KEY));
         assertThat(configuration.getClockSkew()).isEqualTo(Duration.standardSeconds(30));
+        assertThat(configuration.getRunWithMsa()).isEqualTo(true);
     }
 
     @Test
@@ -94,6 +96,7 @@ public class ApplicationConfigurationFeatureTests {
             put("SAML_PRIMARY_ENCRYPTION_KEY", TEST_RP_PRIVATE_ENCRYPTION_KEY);
             put("SAML_SECONDARY_ENCRYPTION_KEY", TEST_RP_PRIVATE_ENCRYPTION_KEY);
             put("CLOCK_SKEW", "PT30s");
+            put("RUN_WITH_MSA", "true");
         }});
 
         application.getTestSupport().before();
@@ -112,5 +115,6 @@ public class ApplicationConfigurationFeatureTests {
         assertThat(configuration.getSamlPrimaryEncryptionKey().getEncoded()).isEqualTo(decode(TEST_RP_PRIVATE_ENCRYPTION_KEY));
         assertThat(configuration.getSamlSecondaryEncryptionKey().getEncoded()).isEqualTo(decode(TEST_RP_PRIVATE_ENCRYPTION_KEY));
         assertThat(configuration.getClockSkew()).isEqualTo(Duration.standardSeconds(30));
+        assertThat(configuration.getRunWithMsa()).isEqualTo(true);
     }
 }
