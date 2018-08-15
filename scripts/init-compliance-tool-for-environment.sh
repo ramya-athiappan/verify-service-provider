@@ -53,6 +53,7 @@ curl $COMPLIANCE_TOOL_INIT_URL --data @- --header 'Content-Type: application/jso
   "matchingServiceEntityId":"$MATCHING_SERVICE_ENTITY_ID",
   "matchingServiceSigningPrivateKey":"$MATCHING_SERVICE_SIGNING_KEY",
   "useSimpleProfile": false,
+  "isMatchingJourney": false,
   "userAccountCreationAttributes":[
     "FIRST_NAME",
     "FIRST_NAME_VERIFIED",
