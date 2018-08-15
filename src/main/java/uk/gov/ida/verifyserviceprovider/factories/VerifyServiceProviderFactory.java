@@ -89,7 +89,8 @@ public class VerifyServiceProviderFactory {
             responseFactory.createResponseService(
                 getHubSignatureTrustEngine(),
                 responseFactory.createAssertionTranslator(getMsaSignatureTrustEngine(), dateTimeComparator),
-                dateTimeComparator
+                dateTimeComparator,
+                configuration.getRunWithMsa()
             ),
             entityIdService
         );
@@ -97,10 +98,6 @@ public class VerifyServiceProviderFactory {
 
     public VersionNumberResource getVersionNumberResource() {
         return new VersionNumberResource(manifestReader);
-    }
-
-    public boolean getRunWithMsa() {
-        return configuration.getRunWithMsa();
     }
 
     private List<KeyPair> getDecryptionKeyPairs(PrivateKey primary, PrivateKey secondary) throws KeyException {

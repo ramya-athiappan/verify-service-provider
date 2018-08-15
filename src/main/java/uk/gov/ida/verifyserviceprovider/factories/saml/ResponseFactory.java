@@ -67,7 +67,8 @@ public class ResponseFactory {
     public ResponseService createResponseService(
         ExplicitKeySignatureTrustEngine hubSignatureTrustEngine,
         AssertionTranslator assertionTranslator,
-        DateTimeComparator dateTimeComparator
+        DateTimeComparator dateTimeComparator,
+        boolean isResponseFromMsa
     ) {
         AssertionDecrypter assertionDecrypter = createAssertionDecrypter();
         MetadataBackedSignatureValidator metadataBackedSignatureValidator = createMetadataBackedSignatureValidator(hubSignatureTrustEngine);
@@ -77,7 +78,8 @@ public class ResponseFactory {
             assertionDecrypter,
             assertionTranslator,
             new SamlResponseSignatureValidator(new SamlMessageSignatureValidator(metadataBackedSignatureValidator)),
-            new InstantValidator(dateTimeComparator)
+            new InstantValidator(dateTimeComparator),
+            isResponseFromMsa
         );
     }
 

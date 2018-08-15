@@ -1,6 +1,7 @@
 package uk.gov.ida.verifyserviceprovider.validators;
 
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import uk.gov.ida.verifyserviceprovider.exceptions.SamlResponseValidationException;
 
@@ -23,19 +24,32 @@ public class AssertionValidator {
         this.conditionsValidator = conditionsValidator;
     }
 
-    public void validate(Assertion assertion, String expectedInResponseTo, String entityId) {
+    public void validateAuthnStatementAssertion(Assertion assertion, String expectedInResponseTo, String entityId) {
+        validateAuthnStatements(assertion.getAuthnStatements());
+        validateAssertion(assertion, expectedInResponseTo, entityId);
+    }
+    
+    public void validateMatchingDatasetAssertion(Assertion assertion, String expectedInResponseTo, String entityId) {
+        validateAttributeStatements(assertion.getAttributeStatements());
+        validateAssertion(assertion, expectedInResponseTo, entityId);
+    }
+    
+    private void validateAssertion(Assertion assertion, String expectedInResponseTo, String entityId) {
         instantValidator.validate(assertion.getIssueInstant(), "Assertion IssueInstant");
         subjectValidator.validate(assertion.getSubject(), expectedInResponseTo);
         conditionsValidator.validate(assertion.getConditions(), entityId);
-
-        validateAuthnStatements(assertion.getAuthnStatements());
-
         instantValidator.validate(assertion.getAuthnStatements().get(0).getAuthnInstant(), "Assertion AuthnInstant");
     }
 
     private void validateAuthnStatements(List<AuthnStatement> authnStatements) {
-        if (authnStatements == null || authnStatements.size() != 1) {
+        if (authnStatements == null || authnStatements.isEmpty() || authnStatements.size() != 1) {
             throw new SamlResponseValidationException("Exactly one authn statement is expected.");
+        }
+    }
+    
+    private void validateAttributeStatements(List<AttributeStatement> attributeStatements) {
+        if (attributeStatements == null || attributeStatements.isEmpty() || attributeStatements.size() != 1) {
+            throw new SamlResponseValidationException("Exactly one attribute statement is expected.");
         }
     }
 }

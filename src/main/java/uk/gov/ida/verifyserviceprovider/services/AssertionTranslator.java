@@ -7,16 +7,15 @@ import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import uk.gov.ida.saml.security.SamlAssertionsSignatureValidator;
+import uk.gov.ida.saml.security.validators.ValidatedAssertions;
 import uk.gov.ida.verifyserviceprovider.dto.LevelOfAssurance;
 import uk.gov.ida.verifyserviceprovider.dto.TranslatedResponseBody;
 import uk.gov.ida.verifyserviceprovider.exceptions.SamlResponseValidationException;
 import uk.gov.ida.verifyserviceprovider.validators.AssertionValidator;
-import uk.gov.ida.verifyserviceprovider.validators.ConditionsValidator;
-import uk.gov.ida.verifyserviceprovider.validators.InstantValidator;
 import uk.gov.ida.verifyserviceprovider.validators.LevelOfAssuranceValidator;
-import uk.gov.ida.verifyserviceprovider.validators.SubjectValidator;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static java.util.Optional.ofNullable;
 import static uk.gov.ida.verifyserviceprovider.dto.Scenario.ACCOUNT_CREATION;
@@ -39,28 +38,53 @@ public class AssertionTranslator {
         List<Assertion> assertions,
         String expectedInResponseTo,
         LevelOfAssurance expectedLevelOfAssurance,
-        String entityId
+        String entityId,
+        boolean isResponseFromMsa
     ) {
-        validateAssertions(assertions);
-        Assertion assertion = assertions.get(0);
+        validateExpectedNumberOfAssertions(assertions, isResponseFromMsa);
 
-        assertionValidator.validate(assertion, expectedInResponseTo, entityId);
-        assertionsSignatureValidator.validate(assertions, IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+        Assertion authnStatementAssertion;
+        AuthnStatement authnStatement;
 
-        AuthnStatement authnStatement = assertion.getAuthnStatements().get(0);
+        ValidatedAssertions validatedAssertions = assertionsSignatureValidator.validate(assertions, IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+        validateExpectedNumberOfAssertions(assertions, isResponseFromMsa);
+        
+        if (isResponseFromMsa) {
+            authnStatementAssertion = assertions.get(0);
+
+            assertionValidator.validateAuthnStatementAssertion(authnStatementAssertion, expectedInResponseTo, entityId);
+            
+            authnStatement = authnStatementAssertion.getAuthnStatements().get(0);
+        }
+        else {
+            Assertion matchingDatasetAssertion;
+            
+            try {
+                authnStatementAssertion = validatedAssertions.getAuthnStatementAssertion().get();
+                matchingDatasetAssertion = validatedAssertions.getMatchingDatasetAssertion().get();    
+            }
+            catch (NoSuchElementException e) {
+                throw new SamlResponseValidationException("Expected assertion was not found.");    
+            }
+            
+            assertionValidator.validateAuthnStatementAssertion(authnStatementAssertion, expectedInResponseTo, entityId);
+            assertionValidator.validateMatchingDatasetAssertion(matchingDatasetAssertion, expectedInResponseTo, entityId);
+
+            authnStatement = authnStatementAssertion.getAuthnStatements().get(0);
+        }
 
         LevelOfAssurance levelOfAssurance = extractLevelOfAssurance(authnStatement);
         LevelOfAssuranceValidator levelOfAssuranceValidator = new LevelOfAssuranceValidator();
         levelOfAssuranceValidator.validate(levelOfAssurance, expectedLevelOfAssurance);
 
-        String nameID = assertion.getSubject().getNameID().getValue();
-        List<AttributeStatement> attributeStatements = assertion.getAttributeStatements();
+        String nameID = authnStatementAssertion.getSubject().getNameID().getValue();
+        List<AttributeStatement> attributeStatements = authnStatementAssertion.getAttributeStatements();
         if (isUserAccountCreation(attributeStatements)) {
             return new TranslatedResponseBody(
-                ACCOUNT_CREATION,
-                nameID,
-                levelOfAssurance,
-                AttributeTranslationService.translateAttributes(attributeStatements.get(0))
+                    ACCOUNT_CREATION,
+                    nameID,
+                    levelOfAssurance,
+                    AttributeTranslationService.translateAttributes(attributeStatements.get(0))
             );
 
         }
@@ -72,9 +96,17 @@ public class AssertionTranslator {
         return !attributeStatements.isEmpty();
     }
 
-    private void validateAssertions(List<Assertion> assertions) {
-        if (assertions == null || assertions.size() != 1) {
+    private void validateExpectedNumberOfAssertions(List<Assertion> assertions, boolean isResponseFromMsa) {
+        if (assertions == null) {
+            throw new SamlResponseValidationException("No assertions found.");
+        }
+        
+        if (assertions.size() != 1 && isResponseFromMsa) {
             throw new SamlResponseValidationException("Exactly one assertion is expected.");
+        }
+
+        if (assertions.size() != 2 && !isResponseFromMsa) {
+            throw new SamlResponseValidationException("Exactly two assertions are expected.");
         }
     }
 

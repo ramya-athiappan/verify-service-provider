@@ -113,6 +113,7 @@ public class ResponseServiceTest {
         ResponseFactory responseFactory = new ResponseFactory(keyPairs);
         DateTimeComparator dateTimeComparator = new DateTimeComparator(Duration.standardSeconds(5));
         TimeRestrictionValidator timeRestrictionValidator = new TimeRestrictionValidator(dateTimeComparator);
+        final boolean isResponseFromMsa = true;
 
         SamlAssertionsSignatureValidator samlAssertionsSignatureValidator = mock(SamlAssertionsSignatureValidator.class);
         InstantValidator instantValidator = new InstantValidator(dateTimeComparator);
@@ -126,7 +127,8 @@ public class ResponseServiceTest {
         responseService = responseFactory.createResponseService(
             signatureTrustEngine,
             assertionTranslator,
-            dateTimeComparator
+            dateTimeComparator,
+            isResponseFromMsa
         );
     }
 

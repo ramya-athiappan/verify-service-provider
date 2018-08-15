@@ -3,7 +3,6 @@ package uk.gov.ida.verifyserviceprovider.services;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.StatusCode;
-import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import uk.gov.ida.saml.core.domain.SamlStatusCode;
 import uk.gov.ida.saml.deserializers.StringToOpenSamlObjectTransformer;
@@ -26,19 +25,22 @@ public class ResponseService {
     private final AssertionTranslator assertionTranslator;
     private final SamlResponseSignatureValidator responseSignatureValidator;
     private final InstantValidator instantValidator;
+    private final boolean isResponseFromMsa;
 
     public ResponseService(
         StringToOpenSamlObjectTransformer<Response> stringToOpenSamlObjectTransformer,
         AssertionDecrypter assertionDecrypter,
         AssertionTranslator assertionTranslator,
         SamlResponseSignatureValidator responseSignatureValidator,
-        InstantValidator instantValidator
+        InstantValidator instantValidator,
+        boolean isResponseFromMsa
     ) {
         this.stringToOpenSamlObjectTransformer = stringToOpenSamlObjectTransformer;
         this.assertionDecrypter = assertionDecrypter;
         this.assertionTranslator = assertionTranslator;
         this.responseSignatureValidator = responseSignatureValidator;
         this.instantValidator = instantValidator;
+        this.isResponseFromMsa = isResponseFromMsa;
     }
 
     public TranslatedResponseBody convertTranslatedResponseBody(
@@ -66,7 +68,7 @@ public class ResponseService {
                 return translateNonSuccessResponse(statusCode);
             case StatusCode.SUCCESS:
                 List<Assertion> assertions = assertionDecrypter.decryptAssertions(validatedResponse);
-                return assertionTranslator.translate(assertions, expectedInResponseTo, expectedLevelOfAssurance, entityId);
+                return assertionTranslator.translate(assertions, expectedInResponseTo, expectedLevelOfAssurance, entityId, isResponseFromMsa);
             default:
                 throw new SamlResponseValidationException(String.format("Unknown SAML status: %s", statusCode.getValue()));
         }

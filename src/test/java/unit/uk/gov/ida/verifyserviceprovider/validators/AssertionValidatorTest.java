@@ -23,6 +23,7 @@ import java.util.Collections;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.ida.saml.core.test.builders.AttributeStatementBuilder.anAttributeStatement;
 import static uk.gov.ida.saml.core.test.builders.AuthnStatementBuilder.anAuthnStatement;
 
 public class AssertionValidatorTest {
@@ -57,32 +58,32 @@ public class AssertionValidatorTest {
     }
 
     @Test
-    public void shouldValidateAssertionIssueInstant() {
+    public void shouldValidateAuthnStatementAssertionIssueInstant() {
         DateTime issueInstant = new DateTime();
         when(assertion.getIssueInstant()).thenReturn(issueInstant);
 
-        validator.validate(assertion, "any-expected-in-response-to", "any-entity-id");
+        validator.validateAuthnStatementAssertion(assertion, "any-expected-in-response-to", "any-entity-id");
 
         verify(instantValidator).validate(issueInstant, "Assertion IssueInstant");
     }
 
     @Test
-    public void shouldValidateAssertionSubject() {
+    public void shouldValidateAuthnStatementAssertionSubject() {
         Subject subject = mock(Subject.class, Answers.RETURNS_DEEP_STUBS);
         when(assertion.getSubject()).thenReturn(subject);
         when(subject.getNameID().getValue()).thenReturn("any-value");
 
-        validator.validate(assertion, "some-expected-in-response-to", "any-entity-id");
+        validator.validateAuthnStatementAssertion(assertion, "some-expected-in-response-to", "any-entity-id");
 
         verify(subjectValidator).validate(subject, "some-expected-in-response-to");
     }
 
     @Test
-    public void shouldValidateAssertionConditions() {
+    public void shouldValidateAuthnStatementAssertionConditions() {
         Conditions conditions = mock(Conditions.class);
         when(assertion.getConditions()).thenReturn(conditions);
 
-        validator.validate(assertion, "any-expected-in-response-to", "some-entity-id");
+        validator.validateAuthnStatementAssertion(assertion, "any-expected-in-response-to", "some-entity-id");
 
         verify(conditionsValidator).validate(conditions, "some-entity-id");
     }
@@ -94,7 +95,7 @@ public class AssertionValidatorTest {
 
         when(assertion.getAuthnStatements()).thenReturn(null);
 
-        validator.validate(assertion, "some-expected-in-response-to", "any-entity-id");
+        validator.validateAuthnStatementAssertion(assertion, "some-expected-in-response-to", "any-entity-id");
     }
 
     @Test
@@ -104,7 +105,7 @@ public class AssertionValidatorTest {
 
         when(assertion.getAuthnStatements()).thenReturn(Collections.emptyList());
 
-        validator.validate(assertion, "some-expected-in-response-to", "any-entity-id");
+        validator.validateAuthnStatementAssertion(assertion, "some-expected-in-response-to", "any-entity-id");
     }
 
     @Test
@@ -117,16 +118,82 @@ public class AssertionValidatorTest {
             anAuthnStatement().build()
         ));
 
-        validator.validate(assertion, "some-expected-in-response-to", "any-entity-id");
+        validator.validateAuthnStatementAssertion(assertion, "some-expected-in-response-to", "any-entity-id");
+    }
+    
+    @Test
+    public void validateAuthnStatementAssertion_shouldThrowException_whenAuthnStatementsIsNull() {
+        expectedException.expect(SamlResponseValidationException.class);
+        expectedException.expectMessage("Exactly one authn statement is expected.");
+
+        when(assertion.getAuthnStatements()).thenReturn(null);
+
+        validator.validateAuthnStatementAssertion(assertion, "some-expected-in-response-to", "any-entity-id");
     }
 
     @Test
-    public void shouldValidateAssertionAuthnInstant() {
+    public void validateAuthnStatementAssertion_shouldThrowException_whenAuthnStatementsIsEmpty() {
+        expectedException.expect(SamlResponseValidationException.class);
+        expectedException.expectMessage("Exactly one authn statement is expected.");
+
+        when(assertion.getAuthnStatements()).thenReturn(ImmutableList.of());
+
+        validator.validateAuthnStatementAssertion(assertion, "some-expected-in-response-to", "any-entity-id");
+    }
+
+    @Test
+    public void validateAuthnStatementAssertion_shouldThrowException_whenNotExactlyOneAuthnStatementExists() {
+        expectedException.expect(SamlResponseValidationException.class);
+        expectedException.expectMessage("Exactly one authn statement is expected.");
+
+        when(assertion.getAuthnStatements()).thenReturn(ImmutableList.of(
+                anAuthnStatement().build(),
+                anAuthnStatement().build()
+        ));
+
+        validator.validateAuthnStatementAssertion(assertion, "some-expected-in-response-to", "any-entity-id");
+    }
+
+    @Test
+    public void shouldValidateAuthnStatementAssertionAuthnInstant() {
         DateTime issueInstant = new DateTime();
         when(assertion.getAuthnStatements().get(0).getAuthnInstant()).thenReturn(issueInstant);
 
-        validator.validate(assertion, "any-expected-in-response-to", "any-entity-id");
+        validator.validateAuthnStatementAssertion(assertion, "any-expected-in-response-to", "any-entity-id");
 
         verify(instantValidator).validate(issueInstant, "Assertion AuthnInstant");
+    }
+
+    @Test
+    public void validateMatchingDatasetAssertion_shouldThrowException_whenAttributeStatementsIsNull() {
+        expectedException.expect(SamlResponseValidationException.class);
+        expectedException.expectMessage("Exactly one attribute statement is expected.");
+
+        when(assertion.getAttributeStatements()).thenReturn(null);
+
+        validator.validateMatchingDatasetAssertion(assertion, "some-expected-in-response-to", "any-entity-id");
+    }
+
+    @Test
+    public void validateMatchingDatasetAssertion_shouldThrowException_whenAttributeStatementsIsEmpty() {
+        expectedException.expect(SamlResponseValidationException.class);
+        expectedException.expectMessage("Exactly one attribute statement is expected.");
+
+        when(assertion.getAttributeStatements()).thenReturn(ImmutableList.of());
+
+        validator.validateMatchingDatasetAssertion(assertion, "some-expected-in-response-to", "any-entity-id");
+    }
+
+    @Test
+    public void validateMatchingDatasetAssertion_shouldThrowException_whenNotExactlyOneAttributeStatementExists() {
+        expectedException.expect(SamlResponseValidationException.class);
+        expectedException.expectMessage("Exactly one attribute statement is expected.");
+
+        when(assertion.getAttributeStatements()).thenReturn(ImmutableList.of(
+                anAttributeStatement().build(),
+                anAttributeStatement().build()
+        ));
+
+        validator.validateMatchingDatasetAssertion(assertion, "some-expected-in-response-to", "any-entity-id");
     }
 }

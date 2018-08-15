@@ -98,7 +98,7 @@ public class AssertionTranslatorTest {
     public void shouldtranslateValidAssertion() {
         TranslatedResponseBody result = translator.translate(ImmutableList.of(
             anAssertionWith("some-pid", LEVEL_2_AUTHN_CTX).buildUnencrypted()
-        ), IN_RESPONSE_TO, LEVEL_2, VERIFY_SERVICE_PROVIDER_ENTITY_ID);
+        ), IN_RESPONSE_TO, LEVEL_2, VERIFY_SERVICE_PROVIDER_ENTITY_ID, true);
         assertThat(result).isEqualTo(new TranslatedResponseBody(
             SUCCESS_MATCH,
             "some-pid",
@@ -111,7 +111,7 @@ public class AssertionTranslatorTest {
     public void shouldAllowHigherLevelOfAssuranceThanRequested() throws Exception {
         TranslatedResponseBody result = translator.translate(ImmutableList.of(
             anAssertionWith("some-pid", LEVEL_2_AUTHN_CTX).buildUnencrypted()
-        ), IN_RESPONSE_TO, LEVEL_1, VERIFY_SERVICE_PROVIDER_ENTITY_ID);
+        ), IN_RESPONSE_TO, LEVEL_1, VERIFY_SERVICE_PROVIDER_ENTITY_ID, true);
         assertThat(result).isEqualTo(new TranslatedResponseBody(
             SUCCESS_MATCH,
             "some-pid",
@@ -125,19 +125,19 @@ public class AssertionTranslatorTest {
         expectedException.expect(SamlResponseValidationException.class);
         expectedException.expectMessage("Exactly one assertion is expected.");
 
-        translator.translate(emptyList(), IN_RESPONSE_TO, LEVEL_2, VERIFY_SERVICE_PROVIDER_ENTITY_ID);
+        translator.translate(emptyList(), IN_RESPONSE_TO, LEVEL_2, VERIFY_SERVICE_PROVIDER_ENTITY_ID, true);
     }
 
     @Test
     public void shouldThrowExceptionWhenAssertionsIsNull() throws Exception {
         expectedException.expect(SamlResponseValidationException.class);
-        expectedException.expectMessage("Exactly one assertion is expected.");
+        expectedException.expectMessage("No assertions found.");
 
-        translator.translate(null, IN_RESPONSE_TO, LEVEL_2, VERIFY_SERVICE_PROVIDER_ENTITY_ID);
+        translator.translate(null, IN_RESPONSE_TO, LEVEL_2, VERIFY_SERVICE_PROVIDER_ENTITY_ID, true);
     }
 
     @Test
-    public void shouldThrowExceptionWhenAssertionsListSizeIsLargerThanOne() throws Exception {
+    public void shouldThrowExceptionWhenRunningMsaAndAssertionsListSizeIsNotOne() throws Exception {
         expectedException.expect(SamlResponseValidationException.class);
         expectedException.expectMessage("Exactly one assertion is expected.");
 
@@ -148,7 +148,23 @@ public class AssertionTranslatorTest {
             ),
             IN_RESPONSE_TO,
             LEVEL_2,
-            VERIFY_SERVICE_PROVIDER_ENTITY_ID);
+            VERIFY_SERVICE_PROVIDER_ENTITY_ID, 
+            true);
+    }
+    
+    @Test
+    public void shouldThrowExceptionWhenNotRunningMsaAndAssertionsListSizeIsNotTwo() throws Exception {
+        expectedException.expect(SamlResponseValidationException.class);
+        expectedException.expectMessage("Exactly two assertions are expected.");
+
+        translator.translate(
+                ImmutableList.of(
+                        anAssertion().buildUnencrypted()
+                ),
+                IN_RESPONSE_TO,
+                LEVEL_2,
+                VERIFY_SERVICE_PROVIDER_ENTITY_ID,
+                false);
     }
 
     @Test
@@ -160,7 +176,8 @@ public class AssertionTranslatorTest {
             anAssertionWith("some-pid", LEVEL_2_AUTHN_CTX).withoutSigning().buildUnencrypted()),
             IN_RESPONSE_TO,
             LEVEL_2,
-            VERIFY_SERVICE_PROVIDER_ENTITY_ID
+            VERIFY_SERVICE_PROVIDER_ENTITY_ID, 
+            true
         );
     }
 
@@ -176,7 +193,8 @@ public class AssertionTranslatorTest {
                 .buildUnencrypted()),
             IN_RESPONSE_TO,
             LEVEL_2,
-            VERIFY_SERVICE_PROVIDER_ENTITY_ID
+            VERIFY_SERVICE_PROVIDER_ENTITY_ID, 
+            true
         );
     }
 
@@ -192,7 +210,7 @@ public class AssertionTranslatorTest {
             .addAuthnStatement(authnStatement
             ).buildUnencrypted();
 
-        translator.translate(ImmutableList.of(assertion), IN_RESPONSE_TO, LEVEL_2, VERIFY_SERVICE_PROVIDER_ENTITY_ID);
+        translator.translate(ImmutableList.of(assertion), IN_RESPONSE_TO, LEVEL_2, VERIFY_SERVICE_PROVIDER_ENTITY_ID, true);
     }
 
     @Test
@@ -210,7 +228,7 @@ public class AssertionTranslatorTest {
                 .build())
             .buildUnencrypted();
 
-        translator.translate(ImmutableList.of(assertion), IN_RESPONSE_TO, LEVEL_2, VERIFY_SERVICE_PROVIDER_ENTITY_ID);
+        translator.translate(ImmutableList.of(assertion), IN_RESPONSE_TO, LEVEL_2, VERIFY_SERVICE_PROVIDER_ENTITY_ID, true);
     }
 
     private AssertionBuilder aSignedAssertion() {

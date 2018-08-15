@@ -30,7 +30,6 @@ public class TranslateSamlResponseResource {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TranslateSamlResponseResource.class);
     private final EntityIdService entityIdService;
 
-
     public TranslateSamlResponseResource(ResponseService responseService, EntityIdService entityIdService) {
         this.responseService = responseService;
         this.entityIdService = entityIdService;
