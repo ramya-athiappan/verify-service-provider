@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-if [ $# -lt 2 ] || [ $# -gt 3 ] ; then
-	echo "this script requires the environment and a persistentId to be passed in as arguments. e.g."
-	echo "$ ./init-compliance-tool.sh <environment> <persistentId>"
+if [ ! $# -eq 3 ] ; then
+	echo "this script requires the environment and a persistentId to be passed in as arguments, along with either the '--matching' flag or the name of a file containing matching dataset json. e.g."
+	echo "$ ./init-compliance-tool.sh <environment> <persistentId> --matching"
 	echo "please try again, currently allowed environments are 'local' and 'dev'"
 	exit 1
 fi
@@ -12,7 +12,7 @@ echo "setting persistentID as $2"
 PID=$2
 
 COMPLIANCE_TOOL_INIT_URL_SLUG="relying-party-service-test-run"
-if [ ${3-""} == "matching" ] ; then
+if [ ${3-""} == "--matching" ] ; then
   COMPLIANCE_TOOL_INIT_URL_SLUG="service-test-data"
 fi
 case $1 in
@@ -45,7 +45,7 @@ case $1 in
 		exit 1
 esac
 
-if [ ${3-""} == "matching" ] ; then
+if [ ${3-""} == "--matching" ] ; then
 	curl $COMPLIANCE_TOOL_INIT_URL --data @- --header 'Content-Type: application/json' <<EOJSON
 	{
 	  "serviceEntityId":"$SERVICE_ENTITY_ID",
