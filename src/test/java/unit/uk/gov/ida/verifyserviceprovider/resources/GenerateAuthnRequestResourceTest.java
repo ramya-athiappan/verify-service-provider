@@ -24,7 +24,6 @@ import uk.gov.ida.verifyserviceprovider.services.EntityIdService;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Base64;
 
@@ -43,16 +42,14 @@ public class GenerateAuthnRequestResourceTest {
 
     private static AuthnRequestFactory authnRequestFactory = mock(AuthnRequestFactory.class);
     private static EntityIdService entityIdService = mock(EntityIdService.class);
-
-    private AuthnRequest authnRequest;
-
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
-        .addProvider(JerseyViolationExceptionMapper.class)
-        .addProvider(JsonProcessingExceptionMapper.class)
-        .addProvider(InvalidEntityIdExceptionMapper.class)
-        .addResource(new GenerateAuthnRequestResource(authnRequestFactory, HUB_SSO_LOCATION, entityIdService))
-        .build();
+            .addProvider(JerseyViolationExceptionMapper.class)
+            .addProvider(JsonProcessingExceptionMapper.class)
+            .addProvider(InvalidEntityIdExceptionMapper.class)
+            .addResource(new GenerateAuthnRequestResource(authnRequestFactory, HUB_SSO_LOCATION, entityIdService))
+            .build();
+    private AuthnRequest authnRequest;
 
     @Before
     public void mockAuthnRequestFactory() {
@@ -110,24 +107,24 @@ public class GenerateAuthnRequestResourceTest {
     @Test
     public void returns422ForBadJson() {
         Response response = resources.target("/generate-request")
-            .request()
-            .post(Entity.entity("{}", MediaType.APPLICATION_JSON_TYPE));
+                .request()
+                .post(Entity.entity("{}", MediaType.APPLICATION_JSON_TYPE));
         assertThat(response.getStatus()).isEqualTo(422);
         assertThat(response.readEntity(ErrorMessage.class)).isEqualTo(new ErrorMessage(
-            422,
-            "levelOfAssurance may not be null")
+                422,
+                "levelOfAssurance may not be null")
         );
     }
 
     @Test
     public void returns422ForMalformedJson() {
         Response response = resources.target("/generate-request")
-            .request()
-            .post(Entity.entity("this is not json", MediaType.APPLICATION_JSON_TYPE));
+                .request()
+                .post(Entity.entity("this is not json", MediaType.APPLICATION_JSON_TYPE));
         assertThat(response.getStatus()).isEqualTo(422);
         assertThat(response.readEntity(ErrorMessage.class)).isEqualTo(new ErrorMessage(
-            422,
-            "Unrecognized token 'this': was expecting 'null', 'true', 'false' or NaN")
+                422,
+                "Unrecognized token 'this': was expecting 'null', 'true', 'false' or NaN")
         );
     }
 

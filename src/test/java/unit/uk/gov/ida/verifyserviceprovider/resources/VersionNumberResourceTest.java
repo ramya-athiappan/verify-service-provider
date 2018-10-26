@@ -27,10 +27,10 @@ public class VersionNumberResourceTest {
 
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
-        .addProvider(JerseyViolationExceptionMapper.class)
-        .addProvider(JsonProcessingExceptionMapper.class)
-        .addResource(new VersionNumberResource(manifestReader))
-        .build();
+            .addProvider(JerseyViolationExceptionMapper.class)
+            .addProvider(JsonProcessingExceptionMapper.class)
+            .addResource(new VersionNumberResource(manifestReader))
+            .build();
 
     @Before
     public void bootStrapOpenSaml() {

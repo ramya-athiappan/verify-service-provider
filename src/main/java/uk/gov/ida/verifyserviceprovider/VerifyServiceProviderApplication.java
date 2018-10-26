@@ -29,7 +29,7 @@ public class VerifyServiceProviderApplication extends Application<VerifyServiceP
         msaMetadataBundle = new MetadataResolverBundle<>((VerifyServiceProviderConfiguration::getMsaMetadata), false);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main( String[] args ) throws Exception {
         if (Arrays.asList(args).isEmpty()) {
             String configFilePath = ConfigurationFileFinder.getConfigurationFilePath();
             new VerifyServiceProviderApplication().run("server", configFilePath);
@@ -39,12 +39,12 @@ public class VerifyServiceProviderApplication extends Application<VerifyServiceP
     }
 
     @Override
-    public void initialize(Bootstrap<VerifyServiceProviderConfiguration> bootstrap) {
+    public void initialize( Bootstrap<VerifyServiceProviderConfiguration> bootstrap ) {
         // Enable variable substitution with environment variables
         bootstrap.setConfigurationSourceProvider(
-            new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
-                new EnvironmentVariableSubstitutor(false)
-            )
+                new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
+                        new EnvironmentVariableSubstitutor(false)
+                )
         );
         IdaSamlBootstrap.bootstrap();
         bootstrap.getObjectMapper().setDateFormat(ISO8601DateFormat.getInstance());
@@ -58,7 +58,7 @@ public class VerifyServiceProviderApplication extends Application<VerifyServiceP
     }
 
     @Override
-    public void run(VerifyServiceProviderConfiguration configuration, Environment environment) throws Exception {
+    public void run( VerifyServiceProviderConfiguration configuration, Environment environment ) throws Exception {
         VerifyServiceProviderFactory factory = new VerifyServiceProviderFactory(configuration, hubMetadataBundle, msaMetadataBundle);
 
         environment.jersey().register(new JerseyViolationExceptionMapper());

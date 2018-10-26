@@ -14,16 +14,16 @@ public class JerseyViolationExceptionMapper implements ExceptionMapper<JerseyVio
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(JerseyViolationExceptionMapper.class);
 
     @Override
-    public Response toResponse(JerseyViolationException exception) {
+    public Response toResponse( JerseyViolationException exception ) {
         final String errors = exception.getConstraintViolations()
-            .stream().map(violation -> ConstraintMessage.getMessage(violation, exception.getInvocable()))
-            .collect(Collectors.joining(", "));
+                .stream().map(violation -> ConstraintMessage.getMessage(violation, exception.getInvocable()))
+                .collect(Collectors.joining(", "));
 
         LOG.warn(String.format("Request body was not valid: %s", errors));
 
         return Response
-            .status(HttpStatus.SC_UNPROCESSABLE_ENTITY)
-            .entity(new ErrorMessage(HttpStatus.SC_UNPROCESSABLE_ENTITY, errors))
-            .build();
+                .status(HttpStatus.SC_UNPROCESSABLE_ENTITY)
+                .entity(new ErrorMessage(HttpStatus.SC_UNPROCESSABLE_ENTITY, errors))
+                .build();
     }
 }

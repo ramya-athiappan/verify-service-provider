@@ -17,12 +17,12 @@ public class Address {
 
     @JsonCreator
     public Address(
-        @JsonProperty("lines") List<String> lines,
-        @JsonProperty("postCode") String postCode,
-        @JsonProperty("internationalPostCode") String internationalPostCode,
-        @JsonProperty("uprn") String uprn,
-        @JsonProperty("fromDate") LocalDate fromDate,
-        @JsonProperty("toDate") LocalDate toDate
+            @JsonProperty("lines") List<String> lines,
+            @JsonProperty("postCode") String postCode,
+            @JsonProperty("internationalPostCode") String internationalPostCode,
+            @JsonProperty("uprn") String uprn,
+            @JsonProperty("fromDate") LocalDate fromDate,
+            @JsonProperty("toDate") LocalDate toDate
     ) {
         this.lines = lines;
         this.postCode = postCode;
@@ -57,7 +57,7 @@ public class Address {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals( Object o ) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -86,13 +86,13 @@ public class Address {
     @Override
     public String toString() {
         return "Address{" +
-            ", lines=" + lines +
-            ", postCode='" + postCode + '\'' +
-            ", internationalPostCode='" + internationalPostCode + '\'' +
-            ", uprn='" + uprn + '\'' +
-            ", fromDate=" + fromDate +
-            ", toDate=" + toDate +
-            '}';
+                ", lines=" + lines +
+                ", postCode='" + postCode + '\'' +
+                ", internationalPostCode='" + internationalPostCode + '\'' +
+                ", uprn='" + uprn + '\'' +
+                ", fromDate=" + fromDate +
+                ", toDate=" + toDate +
+                '}';
     }
 
 }

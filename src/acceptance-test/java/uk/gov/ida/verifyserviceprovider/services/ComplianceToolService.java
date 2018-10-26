@@ -18,9 +18,6 @@ import static uk.gov.ida.verifyserviceprovider.builders.ComplianceToolInitialisa
 
 public class ComplianceToolService {
 
-    private static final String HOST = "https://compliance-tool-reference.ida.digital.cabinet-office.gov.uk";
-    public static final String SSO_LOCATION = HOST + "/SAML2/SSO";
-
     public static final int BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID = 1;
     public static final int BASIC_NO_MATCH_ID = 2;
     public static final int NO_AUTHENTICATION_CONTEXT_ID = 3;
@@ -30,19 +27,20 @@ public class ComplianceToolService {
     public static final int BASIC_SUCCESSFUL_MATCH_WITH_LOA1_ID = 7;
     public static final int ACCOUNT_CREATION_LOA1_ID = 8;
     public static final int BASIC_SUCCESSFUL_MATCH_WITH_ASSERTIONS_SIGNED_BY_HUB_ID = 9;
-
+    private static final String HOST = "https://compliance-tool-reference.ida.digital.cabinet-office.gov.uk";
+    public static final String SSO_LOCATION = HOST + "/SAML2/SSO";
     private final Client client;
 
-    public ComplianceToolService(Client client) {
+    public ComplianceToolService( Client client ) {
         this.client = client;
     }
 
-    public void initialiseWith(Entity initialisationRequest) {
+    public void initialiseWith( Entity initialisationRequest ) {
         Response complianceToolResponse = client
-            .target(URI.create(HOST + "/service-test-data"))
-            .request()
-            .buildPost(initialisationRequest)
-            .invoke();
+                .target(URI.create(HOST + "/service-test-data"))
+                .request()
+                .buildPost(initialisationRequest)
+                .invoke();
 
         assertThat(complianceToolResponse.getStatus()).isEqualTo(OK.getStatusCode());
     }
@@ -51,32 +49,32 @@ public class ComplianceToolService {
         initialiseWithPid("default-expected-pid");
     }
 
-    public void initialiseWithPid(String pid) {
+    public void initialiseWithPid( String pid ) {
         initialiseWith(
-            aComplianceToolInitialisationRequest()
-                .withExpectedPid(pid)
-                .build()
+                aComplianceToolInitialisationRequest()
+                        .withExpectedPid(pid)
+                        .build()
         );
     }
 
-    public void initialiseWithEntityIdAndPid(String entityId, String pid) {
+    public void initialiseWithEntityIdAndPid( String entityId, String pid ) {
         initialiseWith(
-            aComplianceToolInitialisationRequest()
-                .withEntityId(entityId)
-                .withExpectedPid(pid)
-                .build()
+                aComplianceToolInitialisationRequest()
+                        .withEntityId(entityId)
+                        .withExpectedPid(pid)
+                        .build()
         );
     }
 
-    public String createResponseFor(String samlRequest, int testCaseId) {
+    public String createResponseFor( String samlRequest, int testCaseId ) {
         return getExtractedSamlResponse(getResponseUrlById(testCaseId, samlRequest));
     }
 
-    private String getExtractedSamlResponse(String endpoint) {
+    private String getExtractedSamlResponse( String endpoint ) {
         Response response = client.target(endpoint)
-            .request()
-            .buildGet()
-            .invoke();
+                .request()
+                .buildGet()
+                .invoke();
 
         String samlResponse = extractSamlResponse(response.readEntity(String.class));
 
@@ -85,20 +83,20 @@ public class ComplianceToolService {
         return samlResponse;
     }
 
-    private String getResponseUrlById(int testCaseId, String samlRequest) {
+    private String getResponseUrlById( int testCaseId, String samlRequest ) {
         Response complianceToolSsoResponse = client
-            .target(SSO_LOCATION)
-            .request()
-            .buildPost(form(new MultivaluedHashMap<>(ImmutableMap.of("SAMLRequest", samlRequest))))
-            .invoke();
+                .target(SSO_LOCATION)
+                .request()
+                .buildPost(form(new MultivaluedHashMap<>(ImmutableMap.of("SAMLRequest", samlRequest))))
+                .invoke();
 
         JSONObject complianceToolResponseBody = new JSONObject(complianceToolSsoResponse.readEntity(String.class));
 
         Response complianceToolScenariosResponse = client
-            .target(complianceToolResponseBody.getString("responseGeneratorLocation"))
-            .request()
-            .buildGet()
-            .invoke();
+                .target(complianceToolResponseBody.getString("responseGeneratorLocation"))
+                .request()
+                .buildGet()
+                .invoke();
 
         JSONObject complianceToolScenarios = new JSONObject(complianceToolScenariosResponse.readEntity(String.class));
         for (Object object : complianceToolScenarios.getJSONArray("testCases")) {
@@ -112,9 +110,9 @@ public class ComplianceToolService {
         throw new RuntimeException("Couldn't find a test case with id + " + testCaseId);
     }
 
-    private String extractSamlResponse(String complianceToolResponseBody) {
+    private String extractSamlResponse( String complianceToolResponseBody ) {
         Elements responseElements = Jsoup.parse(complianceToolResponseBody)
-            .getElementsByAttributeValue("name", "SAMLResponse");
+                .getElementsByAttributeValue("name", "SAMLResponse");
         return responseElements.get(0).val();
     }
 }

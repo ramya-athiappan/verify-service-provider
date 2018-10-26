@@ -12,31 +12,31 @@ import static uk.gov.ida.saml.core.test.TestCertificateStrings.TEST_RP_PRIVATE_S
 
 public class VerifyServiceProviderAppRule extends DropwizardAppRule<VerifyServiceProviderConfiguration> {
 
-    public VerifyServiceProviderAppRule(MockMsaServer msaServer, String secondaryEncryptionKey, String serviceEntityIdOverride) {
+    public VerifyServiceProviderAppRule( MockMsaServer msaServer, String secondaryEncryptionKey, String serviceEntityIdOverride ) {
         super(
-            VerifyServiceProviderApplication.class,
-            "verify-service-provider.yml",
-            ConfigOverride.config("serviceEntityIds", serviceEntityIdOverride),
-            ConfigOverride.config("server.connector.port", String.valueOf(0)),
-            ConfigOverride.config("logging.loggers.uk\\.gov", "DEBUG"),
-            ConfigOverride.config("samlSigningKey", TEST_RP_PRIVATE_SIGNING_KEY),
-            ConfigOverride.config("verifyHubConfiguration.environment", "COMPLIANCE_TOOL"),
-            ConfigOverride.config("samlPrimaryEncryptionKey", TEST_RP_PRIVATE_ENCRYPTION_KEY),
-            ConfigOverride.config("samlSecondaryEncryptionKey", secondaryEncryptionKey),
-            ConfigOverride.config("msaMetadata.uri", () -> {
-                IdaSamlBootstrap.bootstrap();
-                msaServer.serveDefaultMetadata();
-                return msaServer.getUri();
-            }),
-            ConfigOverride.config("msaMetadata.expectedEntityId", MockMsaServer.MSA_ENTITY_ID)
+                VerifyServiceProviderApplication.class,
+                "verify-service-provider.yml",
+                ConfigOverride.config("serviceEntityIds", serviceEntityIdOverride),
+                ConfigOverride.config("server.connector.port", String.valueOf(0)),
+                ConfigOverride.config("logging.loggers.uk\\.gov", "DEBUG"),
+                ConfigOverride.config("samlSigningKey", TEST_RP_PRIVATE_SIGNING_KEY),
+                ConfigOverride.config("verifyHubConfiguration.environment", "COMPLIANCE_TOOL"),
+                ConfigOverride.config("samlPrimaryEncryptionKey", TEST_RP_PRIVATE_ENCRYPTION_KEY),
+                ConfigOverride.config("samlSecondaryEncryptionKey", secondaryEncryptionKey),
+                ConfigOverride.config("msaMetadata.uri", () -> {
+                    IdaSamlBootstrap.bootstrap();
+                    msaServer.serveDefaultMetadata();
+                    return msaServer.getUri();
+                }),
+                ConfigOverride.config("msaMetadata.expectedEntityId", MockMsaServer.MSA_ENTITY_ID)
         );
     }
 
-    public VerifyServiceProviderAppRule(MockMsaServer msaServer) {
+    public VerifyServiceProviderAppRule( MockMsaServer msaServer ) {
         this(msaServer, TEST_RP_PRIVATE_ENCRYPTION_KEY, "http://verify-service-provider");
     }
 
-    public VerifyServiceProviderAppRule(MockMsaServer msaServer, String serviceEntityIdOverride) {
+    public VerifyServiceProviderAppRule( MockMsaServer msaServer, String serviceEntityIdOverride ) {
         this(msaServer, TEST_RP_PRIVATE_ENCRYPTION_KEY, serviceEntityIdOverride);
     }
 }

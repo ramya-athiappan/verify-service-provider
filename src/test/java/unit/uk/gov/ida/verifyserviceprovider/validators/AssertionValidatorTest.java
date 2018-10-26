@@ -27,15 +27,13 @@ import static uk.gov.ida.saml.core.test.builders.AuthnStatementBuilder.anAuthnSt
 
 public class AssertionValidatorTest {
 
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
     private AssertionValidator validator;
-
     private InstantValidator instantValidator;
     private SubjectValidator subjectValidator;
     private ConditionsValidator conditionsValidator;
     private Assertion assertion;
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -46,9 +44,9 @@ public class AssertionValidatorTest {
         AuthnStatement authnStatement = mock(AuthnStatement.class);
 
         validator = new AssertionValidator(
-            instantValidator,
-            subjectValidator,
-            conditionsValidator
+                instantValidator,
+                subjectValidator,
+                conditionsValidator
         );
 
         when(assertion.getAuthnStatements()).thenReturn(ImmutableList.of(authnStatement));
@@ -113,8 +111,8 @@ public class AssertionValidatorTest {
         expectedException.expectMessage("Exactly one authn statement is expected.");
 
         when(assertion.getAuthnStatements()).thenReturn(ImmutableList.of(
-            anAuthnStatement().build(),
-            anAuthnStatement().build()
+                anAuthnStatement().build(),
+                anAuthnStatement().build()
         ));
 
         validator.validate(assertion, "some-expected-in-response-to", "any-entity-id");

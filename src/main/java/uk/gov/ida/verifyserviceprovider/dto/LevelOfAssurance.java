@@ -9,11 +9,11 @@ public enum LevelOfAssurance {
 
     private final int value;
 
-    private LevelOfAssurance(int value) {
+    private LevelOfAssurance( int value ) {
         this.value = value;
     }
 
-    public static LevelOfAssurance fromSamlValue(String samlValue) {
+    public static LevelOfAssurance fromSamlValue( String samlValue ) {
         switch (samlValue) {
             case IdaAuthnContext.LEVEL_1_AUTHN_CTX:
                 return LEVEL_1;
@@ -24,7 +24,7 @@ public enum LevelOfAssurance {
         }
     }
 
-    public boolean isGreaterThan(LevelOfAssurance target) {
+    public boolean isGreaterThan( LevelOfAssurance target ) {
         return value > target.value;
     }
 }

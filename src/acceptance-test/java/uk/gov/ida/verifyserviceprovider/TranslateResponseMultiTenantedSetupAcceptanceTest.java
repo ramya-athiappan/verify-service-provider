@@ -52,24 +52,24 @@ public class TranslateResponseMultiTenantedSetupAcceptanceTest {
 
         RequestResponseBody requestResponseBody = generateRequestService.generateAuthnRequest(application.getLocalPort(), providedEntityId);
         Map<String, String> translateResponseRequestData = ImmutableMap.of(
-            "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID),
-            "requestId", requestResponseBody.getRequestId(),
-            "levelOfAssurance", LEVEL_2.name(),
-            "entityId", providedEntityId
+                "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID),
+                "requestId", requestResponseBody.getRequestId(),
+                "levelOfAssurance", LEVEL_2.name(),
+                "entityId", providedEntityId
         );
 
         Response response = client
-            .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
-            .request()
-            .buildPost(json(translateResponseRequestData))
-            .invoke();
+                .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
+                .request()
+                .buildPost(json(translateResponseRequestData))
+                .invoke();
 
         assertThat(response.getStatus()).isEqualTo(OK.getStatusCode());
         assertThat(response.readEntity(TranslatedResponseBody.class)).isEqualTo(new TranslatedResponseBody(
-            SUCCESS_MATCH,
-            "some-expected-pid",
-            LEVEL_2,
-            null)
+                SUCCESS_MATCH,
+                "some-expected-pid",
+                LEVEL_2,
+                null)
         );
     }
 
@@ -78,16 +78,16 @@ public class TranslateResponseMultiTenantedSetupAcceptanceTest {
         complianceTool.initialiseWithEntityIdAndPid(configuredEntityIdOne, "some-expected-pid");
         RequestResponseBody requestResponseBody = generateRequestService.generateAuthnRequest(application.getLocalPort(), configuredEntityIdOne);
         Map<String, String> translateResponseRequestData = ImmutableMap.of(
-            "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID),
-            "requestId", requestResponseBody.getRequestId(),
-            "levelOfAssurance", LEVEL_2.name()
+                "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID),
+                "requestId", requestResponseBody.getRequestId(),
+                "levelOfAssurance", LEVEL_2.name()
         );
 
         Response response = client
-            .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
-            .request()
-            .buildPost(json(translateResponseRequestData))
-            .invoke();
+                .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
+                .request()
+                .buildPost(json(translateResponseRequestData))
+                .invoke();
 
         assertThat(response.getStatus()).isEqualTo(BAD_REQUEST.getStatusCode());
         assertThat(response.readEntity(ErrorMessage.class).getMessage()).isEqualTo("No entityId was provided, and there are several in config");
@@ -98,17 +98,17 @@ public class TranslateResponseMultiTenantedSetupAcceptanceTest {
         complianceTool.initialiseWithEntityIdAndPid(configuredEntityIdTwo, "some-expected-pid");
         RequestResponseBody requestResponseBody = generateRequestService.generateAuthnRequest(application.getLocalPort(), configuredEntityIdTwo);
         Map<String, String> translateResponseRequestData = ImmutableMap.of(
-            "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID),
-            "requestId", requestResponseBody.getRequestId(),
-            "levelOfAssurance", LEVEL_2.name(),
-            "entityId", "http://incorrect-entity-id"
+                "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID),
+                "requestId", requestResponseBody.getRequestId(),
+                "levelOfAssurance", LEVEL_2.name(),
+                "entityId", "http://incorrect-entity-id"
         );
 
         Response response = client
-            .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
-            .request()
-            .buildPost(json(translateResponseRequestData))
-            .invoke();
+                .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
+                .request()
+                .buildPost(json(translateResponseRequestData))
+                .invoke();
 
         assertThat(response.getStatus()).isEqualTo(BAD_REQUEST.getStatusCode());
         assertThat(response.readEntity(ErrorMessage.class).getMessage()).isEqualTo("Provided entityId: http://incorrect-entity-id is not listed in config");

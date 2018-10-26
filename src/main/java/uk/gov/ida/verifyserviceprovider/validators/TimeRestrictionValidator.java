@@ -11,24 +11,24 @@ public class TimeRestrictionValidator {
 
     private final DateTimeComparator dateTimeComparator;
 
-    public TimeRestrictionValidator(DateTimeComparator dateTimeComparator) {
+    public TimeRestrictionValidator( DateTimeComparator dateTimeComparator ) {
         this.dateTimeComparator = dateTimeComparator;
     }
 
-    public void validateNotOnOrAfter(DateTime notOnOrAfter) {
+    public void validateNotOnOrAfter( DateTime notOnOrAfter ) {
         if (dateTimeComparator.isBeforeNow(notOnOrAfter)) {
             throw new SamlResponseValidationException(String.format(
-                "Assertion is not valid on or after %s",
-                notOnOrAfter.withZone(UTC).toString(dateHourMinuteSecond())
+                    "Assertion is not valid on or after %s",
+                    notOnOrAfter.withZone(UTC).toString(dateHourMinuteSecond())
             ));
         }
     }
 
-    public void validateNotBefore(DateTime notBefore) {
+    public void validateNotBefore( DateTime notBefore ) {
         if (notBefore != null && dateTimeComparator.isAfterNow(notBefore)) {
             throw new SamlResponseValidationException(String.format(
-                "Assertion is not valid before %s",
-                notBefore.withZone(UTC).toString(dateHourMinuteSecond())
+                    "Assertion is not valid before %s",
+                    notBefore.withZone(UTC).toString(dateHourMinuteSecond())
             ));
         }
     }

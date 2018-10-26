@@ -6,14 +6,14 @@ import uk.gov.ida.verifyserviceprovider.exceptions.SamlResponseValidationExcepti
 public class LevelOfAssuranceValidator {
 
     public void validate(
-        LevelOfAssurance levelOfAssurance,
-        LevelOfAssurance expectedLevelOfAssurance
+            LevelOfAssurance levelOfAssurance,
+            LevelOfAssurance expectedLevelOfAssurance
     ) {
         if (expectedLevelOfAssurance.isGreaterThan(levelOfAssurance)) {
             throw new SamlResponseValidationException(String.format(
-                "Expected Level of Assurance to be at least %s, but was %s",
-                expectedLevelOfAssurance,
-                levelOfAssurance
+                    "Expected Level of Assurance to be at least %s, but was %s",
+                    expectedLevelOfAssurance,
+                    levelOfAssurance
             ));
         }
     }

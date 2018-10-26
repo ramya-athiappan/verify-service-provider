@@ -11,29 +11,29 @@ import static java.util.stream.Collectors.toList;
 
 public class HealthCheckTableFormatter {
 
-    public static String format(HealthCheckRegistry healthCheckRegistry) {
+    public static String format( HealthCheckRegistry healthCheckRegistry ) {
         return StringTableFormatter.format(
-            100,
-            "Healthcheck status:",
-            extractHealthCheckData(healthCheckRegistry)
+                100,
+                "Healthcheck status:",
+                extractHealthCheckData(healthCheckRegistry)
         );
     }
 
-    private static List<String> extractHealthCheckData(HealthCheckRegistry healthCheckRegistry) {
+    private static List<String> extractHealthCheckData( HealthCheckRegistry healthCheckRegistry ) {
         return healthCheckRegistry.runHealthChecks().entrySet().stream()
-            .map(healthCheckItem -> extractHealthCheckItemRows(healthCheckItem.getKey(), healthCheckItem.getValue()))
-            .collect(toList());
+                .map(healthCheckItem -> extractHealthCheckItemRows(healthCheckItem.getKey(), healthCheckItem.getValue()))
+                .collect(toList());
     }
 
-    private static String extractHealthCheckItemRows(String healthCheckName, HealthCheck.Result healthCheckResult) {
+    private static String extractHealthCheckItemRows( String healthCheckName, HealthCheck.Result healthCheckResult ) {
         String healthCheckNameLine = healthCheckName + ":" + lineSeparator();
         String healthyStatusLine = "|     healthy: " + healthCheckResult.isHealthy();
         String messageLine = Optional.ofNullable(healthCheckResult.getMessage())
-            .map(message -> lineSeparator() + "|     message: " + message)
-            .orElse("");
+                .map(message -> lineSeparator() + "|     message: " + message)
+                .orElse("");
 
         return healthCheckNameLine +
-            healthyStatusLine +
-            messageLine;
+                healthyStatusLine +
+                messageLine;
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class AudienceRestrictionValidator {
 
-    public void validate(List<AudienceRestriction> audienceRestrictions, String entityId) {
+    public void validate( List<AudienceRestriction> audienceRestrictions, String entityId ) {
         if (audienceRestrictions == null || audienceRestrictions.size() != 1) {
             throw new SamlResponseValidationException("Exactly one audience restriction is expected.");
         }

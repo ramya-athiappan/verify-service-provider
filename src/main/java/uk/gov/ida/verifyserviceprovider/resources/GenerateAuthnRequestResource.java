@@ -23,19 +23,19 @@ import java.net.URI;
 @Consumes(MediaType.APPLICATION_JSON)
 public class GenerateAuthnRequestResource {
 
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GenerateAuthnRequestResource.class);
     private final URI ssoLocation;
     private final AuthnRequestFactory authnRequestFactory;
     private final EntityIdService entityIdService;
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(GenerateAuthnRequestResource.class);
 
-    public GenerateAuthnRequestResource(AuthnRequestFactory authnRequestFactory, URI ssoLocation, EntityIdService entityIdService) {
+    public GenerateAuthnRequestResource( AuthnRequestFactory authnRequestFactory, URI ssoLocation, EntityIdService entityIdService ) {
         this.authnRequestFactory = authnRequestFactory;
         this.ssoLocation = ssoLocation;
         this.entityIdService = entityIdService;
     }
 
     @POST
-    public Response generateAuthnRequest(@NotNull @Valid RequestGenerationBody requestGenerationBody) {
+    public Response generateAuthnRequest( @NotNull @Valid RequestGenerationBody requestGenerationBody ) {
         String entityId = entityIdService.getEntityId(requestGenerationBody);
         AuthnRequest authnRequest = this.authnRequestFactory.build(requestGenerationBody.getLevelOfAssurance(), entityId);
         XmlObjectToBase64EncodedStringTransformer xmlToBase64Transformer = new XmlObjectToBase64EncodedStringTransformer();

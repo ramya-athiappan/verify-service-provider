@@ -12,12 +12,12 @@ public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProces
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(JsonProcessingExceptionMapper.class);
 
     @Override
-    public Response toResponse(JsonProcessingException exception) {
+    public Response toResponse( JsonProcessingException exception ) {
         LOG.warn(String.format("Unable to parse json in request body. %s", exception.getOriginalMessage()));
 
         return Response
-            .status(HttpStatus.SC_UNPROCESSABLE_ENTITY)
-            .entity(new ErrorMessage(HttpStatus.SC_UNPROCESSABLE_ENTITY, exception.getOriginalMessage()))
-            .build();
+                .status(HttpStatus.SC_UNPROCESSABLE_ENTITY)
+                .entity(new ErrorMessage(HttpStatus.SC_UNPROCESSABLE_ENTITY, exception.getOriginalMessage()))
+                .build();
     }
 }

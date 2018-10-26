@@ -10,14 +10,14 @@ public class ConditionsValidator {
     private final AudienceRestrictionValidator audienceRestrictionValidator;
 
     public ConditionsValidator(
-        TimeRestrictionValidator timeRestrictionValidator,
-        AudienceRestrictionValidator audienceRestrictionValidator
+            TimeRestrictionValidator timeRestrictionValidator,
+            AudienceRestrictionValidator audienceRestrictionValidator
     ) {
         this.timeRestrictionValidator = timeRestrictionValidator;
         this.audienceRestrictionValidator = audienceRestrictionValidator;
     }
 
-    public void validate(Conditions conditionsElement, String entityId) {
+    public void validate( Conditions conditionsElement, String entityId ) {
         if (conditionsElement == null) {
             throw new SamlResponseValidationException("Conditions is missing from the assertion.");
         }

@@ -54,14 +54,14 @@ public class UserAccountCreationResponseAcceptanceTest {
     @Test
     public void shouldHandleAUserAccountCreationResponse() {
         Response response = getResponse(LEVEL_2,
-            "FIRST_NAME",
-            "FIRST_NAME_VERIFIED",
-            "DATE_OF_BIRTH",
-            "DATE_OF_BIRTH_VERIFIED",
-            "CURRENT_ADDRESS",
-            "CURRENT_ADDRESS_VERIFIED",
-            "ADDRESS_HISTORY",
-            "CYCLE_3");
+                "FIRST_NAME",
+                "FIRST_NAME_VERIFIED",
+                "DATE_OF_BIRTH",
+                "DATE_OF_BIRTH_VERIFIED",
+                "CURRENT_ADDRESS",
+                "CURRENT_ADDRESS_VERIFIED",
+                "ADDRESS_HISTORY",
+                "CYCLE_3");
         assertThat(response.getStatus()).isEqualTo(OK.getStatusCode());
 
         JSONObject jsonResponse = new JSONObject(response.readEntity(String.class));
@@ -135,31 +135,31 @@ public class UserAccountCreationResponseAcceptanceTest {
         assertThat(errorResponse.getMessage()).isEqualTo("Invalid attributes request: Cannot request attribute without requesting verification status. Please check your MSA configuration settings.");
     }
 
-    private Response getResponse(LevelOfAssurance levelOfAssurance, String... attributes) {
+    private Response getResponse( LevelOfAssurance levelOfAssurance, String... attributes ) {
         complianceTool.initialiseWith(
-            aComplianceToolInitialisationRequest()
-                .withMatchingServiceSigningPrivateKey(TEST_RP_MS_PRIVATE_SIGNING_KEY)
-                .withMatchingServiceEntityId(MockMsaServer.MSA_ENTITY_ID)
-                .withEncryptionCertificate(TEST_RP_PUBLIC_ENCRYPTION_CERT)
-                .withExpectedPid("some-expected-pid")
-                .withUserAccountCreationAttributes(Arrays.asList(attributes))
-                .build()
+                aComplianceToolInitialisationRequest()
+                        .withMatchingServiceSigningPrivateKey(TEST_RP_MS_PRIVATE_SIGNING_KEY)
+                        .withMatchingServiceEntityId(MockMsaServer.MSA_ENTITY_ID)
+                        .withEncryptionCertificate(TEST_RP_PUBLIC_ENCRYPTION_CERT)
+                        .withExpectedPid("some-expected-pid")
+                        .withUserAccountCreationAttributes(Arrays.asList(attributes))
+                        .build()
         );
 
         RequestResponseBody requestResponseBody = generateRequestService.generateAuthnRequest(application.getLocalPort());
 
         int testCaseId = levelOfAssurance == LEVEL_2 ? ACCOUNT_CREATION_LOA2_ID : ACCOUNT_CREATION_LOA1_ID;
         Map<String, String> translateResponseRequestData = ImmutableMap.of(
-            "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), testCaseId),
-            "requestId", requestResponseBody.getRequestId(),
-            "levelOfAssurance", levelOfAssurance.name()
+                "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), testCaseId),
+                "requestId", requestResponseBody.getRequestId(),
+                "levelOfAssurance", levelOfAssurance.name()
         );
 
         Response response = client
-            .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
-            .request()
-            .buildPost(json(translateResponseRequestData))
-            .invoke();
+                .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
+                .request()
+                .buildPost(json(translateResponseRequestData))
+                .invoke();
 
         return response;
     }

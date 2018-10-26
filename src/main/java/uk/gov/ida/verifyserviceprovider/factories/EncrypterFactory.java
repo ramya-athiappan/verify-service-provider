@@ -9,7 +9,7 @@ public class EncrypterFactory extends uk.gov.ida.saml.security.EncrypterFactory 
     private final EncryptionCredentialResolver encryptionCredentialResolver;
     private final String hubEntityId;
 
-    public EncrypterFactory(EncryptionCredentialResolver encryptionCredentialResolver, String hubEntityId) {
+    public EncrypterFactory( EncryptionCredentialResolver encryptionCredentialResolver, String hubEntityId ) {
         this.encryptionCredentialResolver = encryptionCredentialResolver;
         this.hubEntityId = hubEntityId;
     }

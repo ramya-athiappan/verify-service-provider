@@ -50,16 +50,16 @@ public class InvalidSamlAcceptanceTest {
     public void shouldRespondWithErrorWhenAssertionSignedByHub() {
         RequestResponseBody requestResponseBody = generateRequestService.generateAuthnRequest(application.getLocalPort());
         Map<String, String> translateResponseRequestData = ImmutableMap.of(
-            "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_ASSERTIONS_SIGNED_BY_HUB_ID),
-            "requestId", requestResponseBody.getRequestId(),
-            "levelOfAssurance", LEVEL_2.name()
+                "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_ASSERTIONS_SIGNED_BY_HUB_ID),
+                "requestId", requestResponseBody.getRequestId(),
+                "levelOfAssurance", LEVEL_2.name()
         );
 
         Response response = client
-            .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
-            .request()
-            .buildPost(json(translateResponseRequestData))
-            .invoke();
+                .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
+                .request()
+                .buildPost(json(translateResponseRequestData))
+                .invoke();
 
         ErrorMessage errorBody = response.readEntity(ErrorMessage.class);
 

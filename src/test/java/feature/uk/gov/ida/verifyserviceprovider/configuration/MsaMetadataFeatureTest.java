@@ -38,31 +38,29 @@ import static uk.gov.ida.saml.core.test.builders.CertificateBuilder.aCertificate
 
 public class MsaMetadataFeatureTest {
 
-    private final String HEALTHCHECK_URL = "http://localhost:%d/admin/healthcheck";
-
-    private static WireMockServer wireMockServer = new WireMockServer(wireMockConfig().dynamicPort());
     @ClassRule
     public static MockVerifyHubServer hubServer = new MockVerifyHubServer();
-
+    private static WireMockServer wireMockServer = new WireMockServer(wireMockConfig().dynamicPort());
+    private final String HEALTHCHECK_URL = "http://localhost:%d/admin/healthcheck";
     private DropwizardTestSupport<VerifyServiceProviderConfiguration> applicationTestSupport;
     private EnvironmentHelper environmentHelper = new EnvironmentHelper();
 
     @Before
     public void setUp() {
         KeyStoreResource verifyHubKeystoreResource = aKeyStoreResource()
-            .withCertificate("VERIFY-FEDERATION", aCertificate().withCertificate(METADATA_SIGNING_A_PUBLIC_CERT).build().getCertificate())
-            .build();
+                .withCertificate("VERIFY-FEDERATION", aCertificate().withCertificate(METADATA_SIGNING_A_PUBLIC_CERT).build().getCertificate())
+                .build();
         verifyHubKeystoreResource.create();
         this.applicationTestSupport = new DropwizardTestSupport<>(
-            VerifyServiceProviderApplication.class,
-            "verify-service-provider.yml",
-            config("server.connector.port", "0"),
-            config("verifyHubConfiguration.metadata.uri", () -> String.format("http://localhost:%s/SAML2/metadata", hubServer.port())),
-            config("msaMetadata.uri", () -> String.format("http://localhost:%s/matching-service/metadata", wireMockServer.port())),
-            config("verifyHubConfiguration.metadata.expectedEntityId", HUB_ENTITY_ID),
-            config("msaMetadata.expectedEntityId", MockMsaServer.MSA_ENTITY_ID),
-            config("verifyHubConfiguration.metadata.trustStore.path", verifyHubKeystoreResource.getAbsolutePath()),
-            config("verifyHubConfiguration.metadata.trustStore.password", verifyHubKeystoreResource.getPassword())
+                VerifyServiceProviderApplication.class,
+                "verify-service-provider.yml",
+                config("server.connector.port", "0"),
+                config("verifyHubConfiguration.metadata.uri", () -> String.format("http://localhost:%s/SAML2/metadata", hubServer.port())),
+                config("msaMetadata.uri", () -> String.format("http://localhost:%s/matching-service/metadata", wireMockServer.port())),
+                config("verifyHubConfiguration.metadata.expectedEntityId", HUB_ENTITY_ID),
+                config("msaMetadata.expectedEntityId", MockMsaServer.MSA_ENTITY_ID),
+                config("verifyHubConfiguration.metadata.trustStore.path", verifyHubKeystoreResource.getAbsolutePath()),
+                config("verifyHubConfiguration.metadata.trustStore.password", verifyHubKeystoreResource.getPassword())
         );
 
         environmentHelper.setEnv(new HashMap<String, String>() {{
@@ -88,20 +86,20 @@ public class MsaMetadataFeatureTest {
     @Test
     public void shouldFailHealthcheckWhenMsaMetadataUnavailable() {
         wireMockServer.stubFor(
-            get(urlEqualTo("/matching-service/metadata"))
-                .willReturn(aResponse()
-                    .withStatus(500)
-                )
+                get(urlEqualTo("/matching-service/metadata"))
+                        .willReturn(aResponse()
+                                .withStatus(500)
+                        )
         );
 
         applicationTestSupport.before();
         Client client = new JerseyClientBuilder(applicationTestSupport.getEnvironment()).build("test client");
 
         Response response = client
-            .target(URI.create(String.format(HEALTHCHECK_URL, applicationTestSupport.getLocalPort())))
-            .request()
-            .buildGet()
-            .invoke();
+                .target(URI.create(String.format(HEALTHCHECK_URL, applicationTestSupport.getLocalPort())))
+                .request()
+                .buildGet()
+                .invoke();
 
         String expectedResult = "\"msaMetadata\":{\"healthy\":false";
 
@@ -114,21 +112,21 @@ public class MsaMetadataFeatureTest {
     @Test
     public void shouldPassHealthcheckWhenMsaMetadataAvailable() {
         wireMockServer.stubFor(
-            get(urlEqualTo("/matching-service/metadata"))
-                .willReturn(aResponse()
-                    .withStatus(200)
-                    .withBody(MockMsaServer.msaMetadata())
-                )
+                get(urlEqualTo("/matching-service/metadata"))
+                        .willReturn(aResponse()
+                                .withStatus(200)
+                                .withBody(MockMsaServer.msaMetadata())
+                        )
         );
 
         applicationTestSupport.before();
         Client client = new JerseyClientBuilder(applicationTestSupport.getEnvironment()).build("test client");
 
         Response response = client
-            .target(URI.create(String.format(HEALTHCHECK_URL, applicationTestSupport.getLocalPort())))
-            .request()
-            .buildGet()
-            .invoke();
+                .target(URI.create(String.format(HEALTHCHECK_URL, applicationTestSupport.getLocalPort())))
+                .request()
+                .buildGet()
+                .invoke();
 
         String expectedResult = "\"msaMetadata\":{\"healthy\":true";
 

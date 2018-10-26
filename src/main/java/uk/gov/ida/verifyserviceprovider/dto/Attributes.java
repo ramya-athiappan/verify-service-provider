@@ -14,8 +14,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class Attributes {
 
     private final VerifiableAttribute<String> firstName;
-    private final VerifiableAttribute<String>  middleName;
-    private final VerifiableAttribute<String>  surname;
+    private final VerifiableAttribute<String> middleName;
+    private final VerifiableAttribute<String> surname;
     private final VerifiableAttribute<LocalDate> dateOfBirth;
     private final VerifiableAttribute<Address> address;
     private final List<VerifiableAttribute<Address>> addressHistory;
@@ -23,13 +23,13 @@ public class Attributes {
 
     @JsonCreator
     public Attributes(
-        @JsonProperty("firstName") VerifiableAttribute<String> firstName,
-        @JsonProperty("middleName") VerifiableAttribute<String> middleName,
-        @JsonProperty("surname") VerifiableAttribute<String> surname,
-        @JsonProperty("dateOfBirth") VerifiableAttribute<LocalDate> dateOfBirth,
-        @JsonProperty("address") VerifiableAttribute<Address> address,
-        @JsonProperty("addressHistory") List<VerifiableAttribute<Address>> addressHistory,
-        @JsonProperty("cycle3") String cycle3
+            @JsonProperty("firstName") VerifiableAttribute<String> firstName,
+            @JsonProperty("middleName") VerifiableAttribute<String> middleName,
+            @JsonProperty("surname") VerifiableAttribute<String> surname,
+            @JsonProperty("dateOfBirth") VerifiableAttribute<LocalDate> dateOfBirth,
+            @JsonProperty("address") VerifiableAttribute<Address> address,
+            @JsonProperty("addressHistory") List<VerifiableAttribute<Address>> addressHistory,
+            @JsonProperty("cycle3") String cycle3
     ) {
         this.firstName = firstName;
         this.middleName = middleName;
@@ -69,7 +69,7 @@ public class Attributes {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals( Object o ) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -79,7 +79,8 @@ public class Attributes {
         if (surname != null ? !surname.equals(that.surname) : that.surname != null) return false;
         if (dateOfBirth != null ? !dateOfBirth.equals(that.dateOfBirth) : that.dateOfBirth != null) return false;
         if (address != null ? !address.equals(that.address) : that.address != null) return false;
-        if (addressHistory != null ? !(that.addressHistory != null && CollectionUtils.isEqualCollection(addressHistory, that.addressHistory)) : that.addressHistory != null) return false;
+        if (addressHistory != null ? !(that.addressHistory != null && CollectionUtils.isEqualCollection(addressHistory, that.addressHistory)) : that.addressHistory != null)
+            return false;
         return cycle3 != null ? cycle3.equals(that.cycle3) : that.cycle3 == null;
     }
 
@@ -98,8 +99,8 @@ public class Attributes {
     @Override
     public String toString() {
         return String.format(
-            "Attributes{ firstName=%s, middleName=%s, surname=%s, dateOfBirth=%s, address=%s, addressHistory=%s, cycle3=%s}",
-            firstName, middleName, surname, dateOfBirth, address, addressHistory, cycle3);
+                "Attributes{ firstName=%s, middleName=%s, surname=%s, dateOfBirth=%s, address=%s, addressHistory=%s, cycle3=%s}",
+                firstName, middleName, surname, dateOfBirth, address, addressHistory, cycle3);
     }
 
 }

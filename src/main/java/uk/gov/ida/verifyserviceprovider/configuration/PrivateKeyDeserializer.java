@@ -19,7 +19,7 @@ import static uk.gov.ida.verifyserviceprovider.utils.DefaultObjectMapper.OBJECT_
 public class PrivateKeyDeserializer extends JsonDeserializer<PrivateKey> {
 
     @Override
-    public PrivateKey deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException {
+    public PrivateKey deserialize( JsonParser jsonParser, DeserializationContext context ) throws IOException {
         jsonParser.setCodec(OBJECT_MAPPER);
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
 
@@ -30,7 +30,7 @@ public class PrivateKeyDeserializer extends JsonDeserializer<PrivateKey> {
         }
     }
 
-    private PrivateKey createPrivateKey(byte[] cert) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    private PrivateKey createPrivateKey( byte[] cert ) throws NoSuchAlgorithmException, InvalidKeySpecException {
         KeySpec keySpec = new PKCS8EncodedKeySpec(cert);
         KeyFactory keyFactory;
 

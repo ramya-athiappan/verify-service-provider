@@ -14,12 +14,12 @@ public class VerifyServiceProviderServerListener implements ServerLifecycleListe
 
     private final Environment environment;
 
-    public VerifyServiceProviderServerListener(Environment environment) {
+    public VerifyServiceProviderServerListener( Environment environment ) {
         this.environment = environment;
     }
 
     @Override
-    public void serverStarted(Server server) {
+    public void serverStarted( Server server ) {
         LOGGER.info(UsefulApplicationUrlsTableFormatter.format(environment, server));
         LOGGER.info(HealthCheckTableFormatter.format(environment.healthChecks()));
     }

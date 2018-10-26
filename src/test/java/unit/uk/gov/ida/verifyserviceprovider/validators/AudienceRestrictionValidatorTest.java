@@ -21,10 +21,9 @@ import static uk.gov.ida.saml.core.test.builders.AudienceRestrictionBuilder.anAu
 
 public class AudienceRestrictionValidatorTest {
 
-    private AudienceRestrictionValidator validator;
-
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+    private AudienceRestrictionValidator validator;
 
     @Before
     public void setUp() {
@@ -59,8 +58,8 @@ public class AudienceRestrictionValidatorTest {
         expectedException.expectMessage("Exactly one audience restriction is expected.");
 
         List<AudienceRestriction> audienceRestrictions = ImmutableList.of(
-            anAudienceRestriction().build(),
-            anAudienceRestriction().build()
+                anAudienceRestriction().build(),
+                anAudienceRestriction().build()
         );
 
         validator.validate(audienceRestrictions, "any-entity-id");

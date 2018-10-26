@@ -60,7 +60,7 @@ public class AuthnRequestFactory {
         this.signingKeyPair = signingKeyPair;
     }
 
-    public AuthnRequest build(LevelOfAssurance levelOfAssurance, String serviceEntityId) {
+    public AuthnRequest build( LevelOfAssurance levelOfAssurance, String serviceEntityId ) {
         AuthnRequest authnRequest = new AuthnRequestBuilder().buildObject();
         authnRequest.setID(String.format("_%s", UUID.randomUUID()));
         authnRequest.setIssueInstant(DateTime.now());
@@ -93,7 +93,7 @@ public class AuthnRequestFactory {
         return extensions;
     }
 
-    private EncryptedAttribute encrypt(Attribute attribute) {
+    private EncryptedAttribute encrypt( Attribute attribute ) {
         try {
             return encrypterFactory.createEncrypter().encrypt(attribute);
         } catch (EncryptionException e) {

@@ -49,8 +49,8 @@ public class SecondaryEncryptionKeyAcceptanceTest {
     public void setUp() {
         complianceTool.initialiseWith(
                 aComplianceToolInitialisationRequest()
-                .withEncryptionCertificate(TEST_RP_MS_PUBLIC_ENCRYPTION_CERT)
-                .build()
+                        .withEncryptionCertificate(TEST_RP_MS_PUBLIC_ENCRYPTION_CERT)
+                        .build()
         );
     }
 

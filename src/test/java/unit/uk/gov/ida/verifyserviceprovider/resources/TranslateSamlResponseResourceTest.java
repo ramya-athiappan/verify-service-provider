@@ -44,17 +44,16 @@ import static uk.gov.ida.verifyserviceprovider.dto.LevelOfAssurance.LEVEL_2;
 @RunWith(MockitoJUnitRunner.class)
 public class TranslateSamlResponseResourceTest {
 
+    private static final String defaultEntityId = "http://default-entity-id";
     private static ResponseService responseService = mock(ResponseService.class);
     private static EntityIdService entityIdService = mock(EntityIdService.class);
-    private static final String defaultEntityId = "http://default-entity-id";
-
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
-        .addProvider(JerseyViolationExceptionMapper.class)
-        .addProvider(JsonProcessingExceptionMapper.class)
-        .addProvider(InvalidEntityIdExceptionMapper.class)
-        .addResource(new TranslateSamlResponseResource(responseService, entityIdService))
-        .build();
+            .addProvider(JerseyViolationExceptionMapper.class)
+            .addProvider(JsonProcessingExceptionMapper.class)
+            .addProvider(InvalidEntityIdExceptionMapper.class)
+            .addResource(new TranslateSamlResponseResource(responseService, entityIdService))
+            .build();
 
     @Before
     public void mockEntityIdService() {
@@ -69,19 +68,19 @@ public class TranslateSamlResponseResourceTest {
     @Test
     public void shouldUseResponseServiceToTranslateSaml() throws Exception {
         JSONObject translateResponseRequest = new JSONObject().put("samlResponse", "some-saml-response")
-            .put("requestId", "some-request-id")
-            .put("levelOfAssurance", LEVEL_2.name());
+                .put("requestId", "some-request-id")
+                .put("levelOfAssurance", LEVEL_2.name());
 
         when(responseService.convertTranslatedResponseBody(any(), eq("some-request-id"), eq(LEVEL_2), eq(defaultEntityId)))
-            .thenReturn(new TranslatedResponseBody(Scenario.SUCCESS_MATCH, "some-request-id", LEVEL_2, null));
+                .thenReturn(new TranslatedResponseBody(Scenario.SUCCESS_MATCH, "some-request-id", LEVEL_2, null));
 
         Response response = resources.client()
-            .target("/translate-response")
-            .request()
-            .post(json(translateResponseRequest.toString()));
+                .target("/translate-response")
+                .request()
+                .post(json(translateResponseRequest.toString()));
 
         verify(responseService, times(1)).convertTranslatedResponseBody(
-            translateResponseRequest.getString("samlResponse"), "some-request-id", LEVEL_2, defaultEntityId
+                translateResponseRequest.getString("samlResponse"), "some-request-id", LEVEL_2, defaultEntityId
         );
         assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
     }
@@ -117,9 +116,9 @@ public class TranslateSamlResponseResourceTest {
                 .thenThrow(new SamlTransformationErrorException("Some error.", Level.ERROR));
 
         Response response = resources.client()
-            .target("/translate-response")
-            .request()
-            .post(json(translateResponseRequest.toString()));
+                .target("/translate-response")
+                .request()
+                .post(json(translateResponseRequest.toString()));
 
         assertThat(response.getStatus()).isEqualTo(BAD_REQUEST.getStatusCode());
 
@@ -131,9 +130,9 @@ public class TranslateSamlResponseResourceTest {
     @Test
     public void shouldReturn400WhenCalledWithEmptyJson() throws Exception {
         Response response = resources.client()
-            .target("/translate-response")
-            .request()
-            .post(json("{}"));
+                .target("/translate-response")
+                .request()
+                .post(json("{}"));
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.SC_UNPROCESSABLE_ENTITY);
 

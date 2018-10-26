@@ -12,8 +12,8 @@ public class RequestGenerationBody {
 
     @JsonCreator
     public RequestGenerationBody(
-        @JsonProperty("levelOfAssurance") LevelOfAssurance levelOfAssurance,
-        @JsonProperty("entityId") String entityId) {
+            @JsonProperty("levelOfAssurance") LevelOfAssurance levelOfAssurance,
+            @JsonProperty("entityId") String entityId ) {
         this.levelOfAssurance = levelOfAssurance;
         this.entityId = entityId;
     }

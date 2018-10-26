@@ -26,25 +26,25 @@ import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 @Consumes(MediaType.APPLICATION_JSON)
 public class TranslateNonMatchingSamlResponseResource {
 
-    private final ResponseService responseService;
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TranslateNonMatchingSamlResponseResource.class);
+    private final ResponseService responseService;
     private final EntityIdService entityIdService;
 
 
-    public TranslateNonMatchingSamlResponseResource(ResponseService responseService, EntityIdService entityIdService) {
+    public TranslateNonMatchingSamlResponseResource( ResponseService responseService, EntityIdService entityIdService ) {
         this.responseService = responseService;
         this.entityIdService = entityIdService;
     }
 
     @POST
-    public Response translateResponse(@NotNull @Valid TranslateSamlResponseBody translateSamlResponseBody) throws IOException {
+    public Response translateResponse( @NotNull @Valid TranslateSamlResponseBody translateSamlResponseBody ) throws IOException {
         String entityId = entityIdService.getEntityId(translateSamlResponseBody);
         try {
             TranslatedResponseBody translatedResponseBody = responseService.convertTranslatedResponseBody(
-                translateSamlResponseBody.getSamlResponse(),
-                translateSamlResponseBody.getRequestId(),
-                translateSamlResponseBody.getLevelOfAssurance(),
-                entityId
+                    translateSamlResponseBody.getSamlResponse(),
+                    translateSamlResponseBody.getRequestId(),
+                    translateSamlResponseBody.getLevelOfAssurance(),
+                    entityId
             );
 
             LOG.info(String.format("Translated response for entityId: %s, requestId: %s, got Scenario: %s",
@@ -56,9 +56,9 @@ public class TranslateNonMatchingSamlResponseResource {
         } catch (SamlResponseValidationException | SamlTransformationErrorException e) {
             LOG.warn(String.format("Error translating saml response for entityId: %s, requestId: %s, got Message: %s", entityId, translateSamlResponseBody.getRequestId(), e.getMessage()));
             return Response
-                .status(BAD_REQUEST)
-                .entity(new ErrorMessage(BAD_REQUEST.getStatusCode(), e.getMessage()))
-                .build();
+                    .status(BAD_REQUEST)
+                    .entity(new ErrorMessage(BAD_REQUEST.getStatusCode(), e.getMessage()))
+                    .build();
         }
     }
 }

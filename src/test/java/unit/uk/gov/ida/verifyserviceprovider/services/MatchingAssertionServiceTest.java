@@ -66,6 +66,8 @@ public class MatchingAssertionServiceTest {
 
     private static final String IN_RESPONSE_TO = "_some-request-id";
     private static final String VERIFY_SERVICE_PROVIDER_ENTITY_ID = "default-entity-id";
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
     private MatchingAssertionService matchingAssertionService;
     private Credential testRpMsaSigningCredential = createMSSigningCredential();
 
@@ -90,9 +92,6 @@ public class MatchingAssertionServiceTest {
         matchingAssertionService = responseFactory.createMatchingAssertionService(explicitKeySignatureTrustEngine, dateTimeComparator);
     }
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
     @Before
     public void bootStrapOpenSaml() {
         IdaSamlBootstrap.bootstrap();
@@ -101,26 +100,26 @@ public class MatchingAssertionServiceTest {
     @Test
     public void shouldtranslateValidAssertion() {
         TranslatedResponseBody result = matchingAssertionService.translateSuccessResponse(ImmutableList.of(
-            anAssertionWith("some-pid", LEVEL_2_AUTHN_CTX).buildUnencrypted()
+                anAssertionWith("some-pid", LEVEL_2_AUTHN_CTX).buildUnencrypted()
         ), IN_RESPONSE_TO, LEVEL_2, VERIFY_SERVICE_PROVIDER_ENTITY_ID);
         assertThat(result).isEqualTo(new TranslatedResponseBody(
-            SUCCESS_MATCH,
-            "some-pid",
-            LEVEL_2,
-            null
+                SUCCESS_MATCH,
+                "some-pid",
+                LEVEL_2,
+                null
         ));
     }
 
     @Test
     public void shouldAllowHigherLevelOfAssuranceThanRequested() throws Exception {
         TranslatedResponseBody result = matchingAssertionService.translateSuccessResponse(ImmutableList.of(
-            anAssertionWith("some-pid", LEVEL_2_AUTHN_CTX).buildUnencrypted()
+                anAssertionWith("some-pid", LEVEL_2_AUTHN_CTX).buildUnencrypted()
         ), IN_RESPONSE_TO, LEVEL_1, VERIFY_SERVICE_PROVIDER_ENTITY_ID);
         assertThat(result).isEqualTo(new TranslatedResponseBody(
-            SUCCESS_MATCH,
-            "some-pid",
-            LEVEL_2,
-            null
+                SUCCESS_MATCH,
+                "some-pid",
+                LEVEL_2,
+                null
         ));
     }
 
@@ -146,13 +145,13 @@ public class MatchingAssertionServiceTest {
         expectedException.expectMessage("Exactly one assertion is expected.");
 
         matchingAssertionService.translateSuccessResponse(
-            ImmutableList.of(
-                anAssertion().buildUnencrypted(),
-                anAssertion().buildUnencrypted()
-            ),
-            IN_RESPONSE_TO,
-            LEVEL_2,
-            VERIFY_SERVICE_PROVIDER_ENTITY_ID);
+                ImmutableList.of(
+                        anAssertion().buildUnencrypted(),
+                        anAssertion().buildUnencrypted()
+                ),
+                IN_RESPONSE_TO,
+                LEVEL_2,
+                VERIFY_SERVICE_PROVIDER_ENTITY_ID);
     }
 
     @Test
@@ -161,10 +160,10 @@ public class MatchingAssertionServiceTest {
         expectedException.expectMessage("SAML Validation Specification: Message signature is not signed");
 
         matchingAssertionService.translateSuccessResponse(Collections.singletonList(
-            anAssertionWith("some-pid", LEVEL_2_AUTHN_CTX).withoutSigning().buildUnencrypted()),
-            IN_RESPONSE_TO,
-            LEVEL_2,
-            VERIFY_SERVICE_PROVIDER_ENTITY_ID
+                anAssertionWith("some-pid", LEVEL_2_AUTHN_CTX).withoutSigning().buildUnencrypted()),
+                IN_RESPONSE_TO,
+                LEVEL_2,
+                VERIFY_SERVICE_PROVIDER_ENTITY_ID
         );
     }
 
@@ -175,12 +174,12 @@ public class MatchingAssertionServiceTest {
 
         Credential unknownSigningCredential = new TestCredentialFactory(TEST_PUBLIC_CERT, TEST_PRIVATE_KEY).getSigningCredential();
         matchingAssertionService.translateSuccessResponse(Collections.singletonList(
-            anAssertionWith("some-pid", LEVEL_2_AUTHN_CTX)
-                .withSignature(aSignature().withSigningCredential(unknownSigningCredential).build())
-                .buildUnencrypted()),
-            IN_RESPONSE_TO,
-            LEVEL_2,
-            VERIFY_SERVICE_PROVIDER_ENTITY_ID
+                anAssertionWith("some-pid", LEVEL_2_AUTHN_CTX)
+                        .withSignature(aSignature().withSigningCredential(unknownSigningCredential).build())
+                        .buildUnencrypted()),
+                IN_RESPONSE_TO,
+                LEVEL_2,
+                VERIFY_SERVICE_PROVIDER_ENTITY_ID
         );
     }
 
@@ -190,11 +189,11 @@ public class MatchingAssertionServiceTest {
         expectedException.expectMessage("Expected a level of assurance.");
 
         AuthnStatement authnStatement = anAuthnStatement().withAuthnContext(
-            anAuthnContext().withAuthnContextClassRef(null).build())
-            .build();
+                anAuthnContext().withAuthnContextClassRef(null).build())
+                .build();
         Assertion assertion = aSignedAssertion()
-            .addAuthnStatement(authnStatement
-            ).buildUnencrypted();
+                .addAuthnStatement(authnStatement
+                ).buildUnencrypted();
 
         matchingAssertionService.translateSuccessResponse(ImmutableList.of(assertion), IN_RESPONSE_TO, LEVEL_2, VERIFY_SERVICE_PROVIDER_ENTITY_ID);
     }
@@ -205,14 +204,14 @@ public class MatchingAssertionServiceTest {
         expectedException.expectMessage("Level of assurance 'unknown' is not supported.");
 
         Assertion assertion = aSignedAssertion()
-            .addAuthnStatement(anAuthnStatement()
-                .withAuthnContext(anAuthnContext()
-                    .withAuthnContextClassRef(anAuthnContextClassRef()
-                        .withAuthnContextClasRefValue("unknown")
+                .addAuthnStatement(anAuthnStatement()
+                        .withAuthnContext(anAuthnContext()
+                                .withAuthnContextClassRef(anAuthnContextClassRef()
+                                        .withAuthnContextClasRefValue("unknown")
+                                        .build())
+                                .build())
                         .build())
-                    .build())
-                .build())
-            .buildUnencrypted();
+                .buildUnencrypted();
 
         matchingAssertionService.translateSuccessResponse(ImmutableList.of(assertion), IN_RESPONSE_TO, LEVEL_2, VERIFY_SERVICE_PROVIDER_ENTITY_ID);
     }
@@ -283,41 +282,41 @@ public class MatchingAssertionServiceTest {
         issuer.setValue(TestEntityIds.TEST_RP_MS);
         return anAssertion()
                 .withIssuer(issuer)
-            .withSubject(aValidSubject().build())
-            .withConditions(aValidConditions().build())
-            .withSignature(aSignature()
-                .withSigningCredential(testRpMsaSigningCredential)
-                .build());
+                .withSubject(aValidSubject().build())
+                .withConditions(aValidConditions().build())
+                .withSignature(aSignature()
+                        .withSigningCredential(testRpMsaSigningCredential)
+                        .build());
     }
 
     private SubjectBuilder aValidSubject() {
         return aSubject()
-            .withSubjectConfirmation(
-                aSubjectConfirmation()
-                    .withSubjectConfirmationData(aSubjectConfirmationData()
-                        .withNotOnOrAfter(DateTime.now().plusMinutes(15))
-                        .withInResponseTo(IN_RESPONSE_TO)
-                        .build())
-                    .build());
+                .withSubjectConfirmation(
+                        aSubjectConfirmation()
+                                .withSubjectConfirmationData(aSubjectConfirmationData()
+                                        .withNotOnOrAfter(DateTime.now().plusMinutes(15))
+                                        .withInResponseTo(IN_RESPONSE_TO)
+                                        .build())
+                                .build());
     }
 
     private ConditionsBuilder aValidConditions() {
         return aConditions()
-            .withoutDefaultAudienceRestriction()
-            .addAudienceRestriction(anAudienceRestriction()
-                .withAudienceId(VERIFY_SERVICE_PROVIDER_ENTITY_ID)
-                .build());
+                .withoutDefaultAudienceRestriction()
+                .addAudienceRestriction(anAudienceRestriction()
+                        .withAudienceId(VERIFY_SERVICE_PROVIDER_ENTITY_ID)
+                        .build());
     }
 
-    private AssertionBuilder anAssertionWith(String pid, String levelOfAssurance) {
+    private AssertionBuilder anAssertionWith( String pid, String levelOfAssurance ) {
         return aSignedAssertion()
-            .withSubject(aValidSubject().withPersistentId(pid).build())
-            .withConditions(aValidConditions().build())
-            .addAuthnStatement(anAuthnStatement()
-                .withAuthnContext(anAuthnContext()
-                    .withAuthnContextClassRef(anAuthnContextClassRef()
-                        .withAuthnContextClasRefValue(levelOfAssurance).build())
-                    .build())
-                .build());
+                .withSubject(aValidSubject().withPersistentId(pid).build())
+                .withConditions(aValidConditions().build())
+                .addAuthnStatement(anAuthnStatement()
+                        .withAuthnContext(anAuthnContext()
+                                .withAuthnContextClassRef(anAuthnContextClassRef()
+                                        .withAuthnContextClasRefValue(levelOfAssurance).build())
+                                .build())
+                        .build());
     }
 }

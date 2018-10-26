@@ -11,9 +11,9 @@ public class RequestResponseBody {
     private final URI ssoLocation;
 
     @JsonCreator
-    public RequestResponseBody(@JsonProperty("samlRequest") String samlRequest,
-                               @JsonProperty("requestId") String requestId,
-                               @JsonProperty("ssoLocation") URI ssoLocation) {
+    public RequestResponseBody( @JsonProperty("samlRequest") String samlRequest,
+                                @JsonProperty("requestId") String requestId,
+                                @JsonProperty("ssoLocation") URI ssoLocation ) {
         this.samlRequest = samlRequest;
         this.requestId = requestId;
         this.ssoLocation = ssoLocation;

@@ -16,12 +16,10 @@ import static org.mockito.Mockito.when;
 
 public class TimeRestrictionValidatorTest {
 
-    private DateTimeComparator dateTimeComparator;
-
-    private TimeRestrictionValidator validator;
-
     @Rule
     public ExpectedException exception = ExpectedException.none();
+    private DateTimeComparator dateTimeComparator;
+    private TimeRestrictionValidator validator;
 
     @Before
     public void setUp() {
@@ -35,8 +33,8 @@ public class TimeRestrictionValidatorTest {
         DateTime notOnOrAfter = new DateTime();
         exception.expect(SamlResponseValidationException.class);
         exception.expectMessage(String.format(
-            "Assertion is not valid on or after %s",
-            notOnOrAfter.withZone(UTC).toString(dateHourMinuteSecond())
+                "Assertion is not valid on or after %s",
+                notOnOrAfter.withZone(UTC).toString(dateHourMinuteSecond())
         ));
 
         when(dateTimeComparator.isBeforeNow(notOnOrAfter)).thenReturn(true);
@@ -49,8 +47,8 @@ public class TimeRestrictionValidatorTest {
         DateTime notBefore = new DateTime();
         exception.expect(SamlResponseValidationException.class);
         exception.expectMessage(String.format(
-            "Assertion is not valid before %s",
-            notBefore.withZone(UTC).toString(dateHourMinuteSecond())
+                "Assertion is not valid before %s",
+                notBefore.withZone(UTC).toString(dateHourMinuteSecond())
         ));
 
         when(dateTimeComparator.isAfterNow(notBefore)).thenReturn(true);

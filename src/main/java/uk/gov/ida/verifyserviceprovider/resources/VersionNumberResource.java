@@ -19,7 +19,7 @@ public class VersionNumberResource {
 
     private final ManifestReader manifestReader;
 
-    public VersionNumberResource(ManifestReader manifestReader) {
+    public VersionNumberResource( ManifestReader manifestReader ) {
         this.manifestReader = manifestReader;
     }
 

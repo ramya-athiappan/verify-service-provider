@@ -13,13 +13,13 @@ public class VerifiableAttribute<T> {
     private final boolean verified;
 
     @JsonCreator
-    public VerifiableAttribute(@JsonProperty("value") T value,
-                               @JsonProperty("verified") boolean verified) {
+    public VerifiableAttribute( @JsonProperty("value") T value,
+                                @JsonProperty("verified") boolean verified ) {
         this.value = value;
         this.verified = verified;
     }
 
-    public static <Y> VerifiableAttribute<Y> fromOptionals(Optional<Y> value, Optional<Boolean> verified) {
+    public static <Y> VerifiableAttribute<Y> fromOptionals( Optional<Y> value, Optional<Boolean> verified ) {
         if (value.isPresent() && verified.isPresent()) {
             return new VerifiableAttribute<>(value.get(), verified.get());
         }
@@ -48,7 +48,7 @@ public class VerifiableAttribute<T> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals( Object o ) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

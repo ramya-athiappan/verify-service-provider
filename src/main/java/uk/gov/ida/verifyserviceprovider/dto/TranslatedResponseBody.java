@@ -14,10 +14,10 @@ public class TranslatedResponseBody {
 
     @JsonCreator
     public TranslatedResponseBody(
-        @JsonProperty("scenario") Scenario scenario,
-        @JsonProperty("pid") String pid,
-        @JsonProperty("levelOfAssurance") LevelOfAssurance levelOfAssurance,
-        @JsonProperty("attributes") Attributes attributes
+            @JsonProperty("scenario") Scenario scenario,
+            @JsonProperty("pid") String pid,
+            @JsonProperty("levelOfAssurance") LevelOfAssurance levelOfAssurance,
+            @JsonProperty("attributes") Attributes attributes
     ) {
         this.scenario = scenario;
         this.pid = pid;
@@ -42,7 +42,7 @@ public class TranslatedResponseBody {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals( Object o ) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
@@ -66,11 +66,11 @@ public class TranslatedResponseBody {
     @Override
     public String toString() {
         return "TranslatedResponseBody{" +
-            "scenario='" + scenario + '\'' +
-            ", pid='" + pid + '\'' +
-            ", levelOfAssurance=" + levelOfAssurance +
-            ", attributes=" + attributes +
-            '}';
+                "scenario='" + scenario + '\'' +
+                ", pid='" + pid + '\'' +
+                ", levelOfAssurance=" + levelOfAssurance +
+                ", attributes=" + attributes +
+                '}';
     }
 
 }

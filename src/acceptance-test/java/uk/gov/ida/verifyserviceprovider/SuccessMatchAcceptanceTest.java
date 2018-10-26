@@ -28,11 +28,9 @@ import static uk.gov.ida.verifyserviceprovider.services.ComplianceToolService.BA
 import static uk.gov.ida.verifyserviceprovider.services.ComplianceToolService.BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID;
 
 public class SuccessMatchAcceptanceTest {
-    private static String configuredEntityId = "http://verify-service-provider";
-
     @ClassRule
     public static MockMsaServer msaServer = new MockMsaServer();
-
+    private static String configuredEntityId = "http://verify-service-provider";
     @ClassRule
     public static VerifyServiceProviderAppRule application = new VerifyServiceProviderAppRule(msaServer, configuredEntityId);
 
@@ -56,23 +54,23 @@ public class SuccessMatchAcceptanceTest {
     public void shouldHandleASuccessMatchResponseForDefaultEntityId() {
         RequestResponseBody requestResponseBody = generateRequestService.generateAuthnRequest(application.getLocalPort());
         Map<String, String> translateResponseRequestData = ImmutableMap.of(
-            "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID),
-            "requestId", requestResponseBody.getRequestId(),
-            "levelOfAssurance", LEVEL_2.name()
+                "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID),
+                "requestId", requestResponseBody.getRequestId(),
+                "levelOfAssurance", LEVEL_2.name()
         );
 
         Response response = client
-            .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
-            .request()
-            .buildPost(json(translateResponseRequestData))
-            .invoke();
+                .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
+                .request()
+                .buildPost(json(translateResponseRequestData))
+                .invoke();
 
         assertThat(response.getStatus()).isEqualTo(OK.getStatusCode());
         assertThat(response.readEntity(TranslatedResponseBody.class)).isEqualTo(new TranslatedResponseBody(
-            SUCCESS_MATCH,
-            "some-expected-pid",
-            LEVEL_2,
-            null)
+                SUCCESS_MATCH,
+                "some-expected-pid",
+                LEVEL_2,
+                null)
         );
     }
 
@@ -83,24 +81,24 @@ public class SuccessMatchAcceptanceTest {
 
         RequestResponseBody requestResponseBody = generateRequestService.generateAuthnRequest(application.getLocalPort(), providedEntityId);
         Map<String, String> translateResponseRequestData = ImmutableMap.of(
-            "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID),
-            "requestId", requestResponseBody.getRequestId(),
-            "levelOfAssurance", LEVEL_2.name(),
-            "entityId", providedEntityId
+                "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID),
+                "requestId", requestResponseBody.getRequestId(),
+                "levelOfAssurance", LEVEL_2.name(),
+                "entityId", providedEntityId
         );
 
         Response response = client
-            .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
-            .request()
-            .buildPost(json(translateResponseRequestData))
-            .invoke();
+                .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
+                .request()
+                .buildPost(json(translateResponseRequestData))
+                .invoke();
 
         assertThat(response.getStatus()).isEqualTo(OK.getStatusCode());
         assertThat(response.readEntity(TranslatedResponseBody.class)).isEqualTo(new TranslatedResponseBody(
-            SUCCESS_MATCH,
-            "some-expected-pid",
-            LEVEL_2,
-            null)
+                SUCCESS_MATCH,
+                "some-expected-pid",
+                LEVEL_2,
+                null)
         );
     }
 
@@ -132,16 +130,16 @@ public class SuccessMatchAcceptanceTest {
     public void shouldReturnAnErrorWhenTranslatingLowerLoAThanRequested() {
         RequestResponseBody requestResponseBody = generateRequestService.generateAuthnRequest(application.getLocalPort());
         Map<String, String> translateResponseRequestData = ImmutableMap.of(
-            "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA1_ID),
-            "requestId", requestResponseBody.getRequestId(),
-            "levelOfAssurance", LEVEL_2.name()
+                "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA1_ID),
+                "requestId", requestResponseBody.getRequestId(),
+                "levelOfAssurance", LEVEL_2.name()
         );
 
         Response response = client
-            .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
-            .request()
-            .buildPost(json(translateResponseRequestData))
-            .invoke();
+                .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
+                .request()
+                .buildPost(json(translateResponseRequestData))
+                .invoke();
 
         assertThat(response.getStatus()).isEqualTo(BAD_REQUEST.getStatusCode());
         ErrorMessage errorMessage = response.readEntity(ErrorMessage.class);
@@ -153,17 +151,17 @@ public class SuccessMatchAcceptanceTest {
     public void shouldReturnAnErrorWhenInvalidEntityIdProvided() {
         RequestResponseBody requestResponseBody = generateRequestService.generateAuthnRequest(application.getLocalPort());
         Map<String, String> translateResponseRequestData = ImmutableMap.of(
-            "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID),
-            "requestId", requestResponseBody.getRequestId(),
-            "levelOfAssurance", LEVEL_2.name(),
-            "entityId", "invalidEntityId"
+                "samlResponse", complianceTool.createResponseFor(requestResponseBody.getSamlRequest(), BASIC_SUCCESSFUL_MATCH_WITH_LOA2_ID),
+                "requestId", requestResponseBody.getRequestId(),
+                "levelOfAssurance", LEVEL_2.name(),
+                "entityId", "invalidEntityId"
         );
 
         Response response = client
-            .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
-            .request()
-            .buildPost(json(translateResponseRequestData))
-            .invoke();
+                .target(String.format("http://localhost:%d/translate-response", application.getLocalPort()))
+                .request()
+                .buildPost(json(translateResponseRequestData))
+                .invoke();
 
         assertThat(response.getStatus()).isEqualTo(BAD_REQUEST.getStatusCode());
         ErrorMessage errorMessage = response.readEntity(ErrorMessage.class);

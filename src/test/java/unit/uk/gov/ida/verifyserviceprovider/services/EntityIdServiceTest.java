@@ -69,8 +69,8 @@ public class EntityIdServiceTest {
         RequestGenerationBody requestGenerationBody = new RequestGenerationBody(null, null);
 
         assertThatThrownBy(() -> entityIdService.getEntityId(requestGenerationBody))
-            .isExactlyInstanceOf(InvalidEntityIdException.class)
-            .hasMessage("No entityId was provided, and there are several in config");
+                .isExactlyInstanceOf(InvalidEntityIdException.class)
+                .hasMessage("No entityId was provided, and there are several in config");
     }
 
     @Test
@@ -79,8 +79,8 @@ public class EntityIdServiceTest {
         TranslateSamlResponseBody translateSamlResponseBody = new TranslateSamlResponseBody(null, null, null, null);
 
         assertThatThrownBy(() -> entityIdService.getEntityId(translateSamlResponseBody))
-            .isExactlyInstanceOf(InvalidEntityIdException.class)
-            .hasMessage("No entityId was provided, and there are several in config");
+                .isExactlyInstanceOf(InvalidEntityIdException.class)
+                .hasMessage("No entityId was provided, and there are several in config");
     }
 
     @Test
@@ -89,8 +89,8 @@ public class EntityIdServiceTest {
         RequestGenerationBody requestGenerationBody = new RequestGenerationBody(null, "http://some.other.entity.id");
 
         assertThatThrownBy(() -> entityIdService.getEntityId(requestGenerationBody))
-            .isExactlyInstanceOf(InvalidEntityIdException.class)
-            .hasMessage("Provided entityId: http://some.other.entity.id is not listed in config");
+                .isExactlyInstanceOf(InvalidEntityIdException.class)
+                .hasMessage("Provided entityId: http://some.other.entity.id is not listed in config");
     }
 
     @Test
@@ -99,7 +99,7 @@ public class EntityIdServiceTest {
         TranslateSamlResponseBody translateSamlResponseBody = new TranslateSamlResponseBody(null, null, null, "http://some.other.entity.id");
 
         assertThatThrownBy(() -> entityIdService.getEntityId(translateSamlResponseBody))
-            .isExactlyInstanceOf(InvalidEntityIdException.class)
-            .hasMessage("Provided entityId: http://some.other.entity.id is not listed in config");
+                .isExactlyInstanceOf(InvalidEntityIdException.class)
+                .hasMessage("Provided entityId: http://some.other.entity.id is not listed in config");
     }
 }

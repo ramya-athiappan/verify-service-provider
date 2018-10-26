@@ -10,17 +10,17 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 
 public class MockVerifyHubServer extends WireMockClassRule {
 
-    public MockVerifyHubServer(){
+    public MockVerifyHubServer() {
         super(wireMockConfig().dynamicPort());
     }
 
     public void serveDefaultMetadata() {
         stubFor(
-            get(urlEqualTo("/SAML2/metadata"))
-                .willReturn(aResponse()
-                    .withStatus(200)
-                    .withBody(new MetadataFactory().defaultMetadata())
-                )
+                get(urlEqualTo("/SAML2/metadata"))
+                        .willReturn(aResponse()
+                                .withStatus(200)
+                                .withBody(new MetadataFactory().defaultMetadata())
+                        )
         );
     }
 }

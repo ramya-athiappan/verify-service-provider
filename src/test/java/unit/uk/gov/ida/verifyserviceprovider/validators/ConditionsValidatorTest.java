@@ -25,14 +25,12 @@ import static uk.gov.ida.saml.core.test.builders.AudienceRestrictionBuilder.anAu
 
 public class ConditionsValidatorTest {
 
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
     private TimeRestrictionValidator timeRestrictionValidator;
     private AudienceRestrictionValidator audienceRestrictionValidator;
     private Conditions conditions;
-
     private ConditionsValidator validator;
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() {

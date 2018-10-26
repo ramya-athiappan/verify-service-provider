@@ -8,7 +8,7 @@ import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 
 public class SamlResponseHelper {
 
-    public static Attribute createVerifiedAttribute(String name, boolean value) {
+    public static Attribute createVerifiedAttribute( String name, boolean value ) {
         Attribute attribute = new OpenSamlXmlObjectFactory().createAttribute();
         attribute.setName(name);
 

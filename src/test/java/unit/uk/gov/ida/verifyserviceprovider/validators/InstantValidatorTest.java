@@ -16,12 +16,10 @@ import static org.mockito.Mockito.when;
 
 public class InstantValidatorTest {
 
-    private DateTimeComparator dateTimeComparator;
-
-    private InstantValidator validator;
-
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+    private DateTimeComparator dateTimeComparator;
+    private InstantValidator validator;
 
     @Before
     public void setUp() {
@@ -50,8 +48,8 @@ public class InstantValidatorTest {
     public void shouldThrowExceptionWhenInstantIsInTheFuture() {
         DateTime instant = new DateTime().plusMinutes(1);
         String errorMessage = String.format("%s is in the future %s",
-            "some-instant-name",
-            instant.withZone(UTC).toString(dateHourMinuteSecond()));
+                "some-instant-name",
+                instant.withZone(UTC).toString(dateHourMinuteSecond()));
 
         when(dateTimeComparator.isAfterNow(instant)).thenReturn(true);
 

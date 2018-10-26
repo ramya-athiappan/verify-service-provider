@@ -42,32 +42,32 @@ public class ComplianceToolInitialisationRequestBuilder {
         return Entity.json(map);
     }
 
-    public ComplianceToolInitialisationRequestBuilder withEntityId(String entityId) {
+    public ComplianceToolInitialisationRequestBuilder withEntityId( String entityId ) {
         this.serviceEntityId = entityId;
         return this;
     }
 
-    public ComplianceToolInitialisationRequestBuilder withEncryptionCertificate(String encryptionCertificate) {
+    public ComplianceToolInitialisationRequestBuilder withEncryptionCertificate( String encryptionCertificate ) {
         this.encryptionCertificate = encryptionCertificate;
         return this;
     }
 
-    public ComplianceToolInitialisationRequestBuilder withExpectedPid(String expectedPid) {
+    public ComplianceToolInitialisationRequestBuilder withExpectedPid( String expectedPid ) {
         this.expectedPID = expectedPid;
         return this;
     }
 
-    public ComplianceToolInitialisationRequestBuilder withUserAccountCreationAttributes(List<String> userAccountCreationAttributes) {
+    public ComplianceToolInitialisationRequestBuilder withUserAccountCreationAttributes( List<String> userAccountCreationAttributes ) {
         this.userAccountCreationAttributes = userAccountCreationAttributes;
         return this;
     }
 
-    public ComplianceToolInitialisationRequestBuilder withMatchingServiceSigningPrivateKey(String privateKey) {
+    public ComplianceToolInitialisationRequestBuilder withMatchingServiceSigningPrivateKey( String privateKey ) {
         this.matchingServiceSigningPrivateKey = privateKey;
         return this;
     }
 
-    public ComplianceToolInitialisationRequestBuilder withMatchingServiceEntityId(String matchingServiceEntityId) {
+    public ComplianceToolInitialisationRequestBuilder withMatchingServiceEntityId( String matchingServiceEntityId ) {
         this.matchingServiceEntityId = matchingServiceEntityId;
         return this;
     }

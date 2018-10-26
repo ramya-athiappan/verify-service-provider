@@ -30,15 +30,15 @@ public class ApplicationConfigurationFeatureTests {
     @Before
     public void setUp() {
         KeyStoreResource keyStoreResource = aKeyStoreResource()
-            .withCertificate("any-alias", aCertificate().build().getCertificate())
-            .build();
+                .withCertificate("any-alias", aCertificate().build().getCertificate())
+                .build();
         keyStoreResource.create();
         application = new DropwizardAppRule<>(
-            VerifyServiceProviderApplication.class,
-            "verify-service-provider.yml",
-            ConfigOverride.config("logging.loggers.uk\\.gov", "DEBUG"),
-            ConfigOverride.config("verifyHubConfiguration.metadata.trustStore.path", keyStoreResource.getAbsolutePath()),
-            ConfigOverride.config("verifyHubConfiguration.metadata.trustStore.password", keyStoreResource.getPassword())
+                VerifyServiceProviderApplication.class,
+                "verify-service-provider.yml",
+                ConfigOverride.config("logging.loggers.uk\\.gov", "DEBUG"),
+                ConfigOverride.config("verifyHubConfiguration.metadata.trustStore.path", keyStoreResource.getAbsolutePath()),
+                ConfigOverride.config("verifyHubConfiguration.metadata.trustStore.password", keyStoreResource.getPassword())
         );
     }
 

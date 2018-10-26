@@ -12,16 +12,16 @@ import static uk.gov.ida.verifyserviceprovider.configuration.ConfigurationConsta
 import static uk.gov.ida.verifyserviceprovider.configuration.ConfigurationConstants.TEST_VERIFY_TRUSTSTORE_NAME;
 
 public class DefaultHubTrustStoreConfiguration extends TrustStoreConfiguration {
+    private final HubEnvironment environment;
     /**
      * Note: our trust stores do not contain private keys,
      * so this password does not need to be managed securely.
-     *
+     * <p>
      * This password MUST NOT be used for anything sensitive, since it is open source.
      */
     private String DEFAULT_TRUST_STORE_PASSWORD = "bj76LWZ+F5L1Biq4EZB+Ta7MUY4EQMgmZmqAHh";
-    private final HubEnvironment environment;
 
-    public DefaultHubTrustStoreConfiguration(HubEnvironment environment) {
+    public DefaultHubTrustStoreConfiguration( HubEnvironment environment ) {
         this.environment = environment;
     }
 

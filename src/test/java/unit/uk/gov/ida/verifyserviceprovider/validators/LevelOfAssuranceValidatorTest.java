@@ -9,10 +9,9 @@ import uk.gov.ida.verifyserviceprovider.validators.LevelOfAssuranceValidator;
 
 public class LevelOfAssuranceValidatorTest {
 
-    private LevelOfAssuranceValidator validator = new LevelOfAssuranceValidator();
-
     @Rule
     public ExpectedException exception = ExpectedException.none();
+    private LevelOfAssuranceValidator validator = new LevelOfAssuranceValidator();
 
     @Test
     public void shouldValidateThatTheLevelOfAssuranceExceedsTheOneExpected() {
@@ -29,9 +28,9 @@ public class LevelOfAssuranceValidatorTest {
 
         exception.expect(SamlResponseValidationException.class);
         exception.expectMessage(String.format(
-            "Expected Level of Assurance to be at least %s, but was %s",
-            expectedLevelOfAssurance,
-            levelOfAssurance
+                "Expected Level of Assurance to be at least %s, but was %s",
+                expectedLevelOfAssurance,
+                levelOfAssurance
         ));
 
         validator.validate(levelOfAssurance, expectedLevelOfAssurance);

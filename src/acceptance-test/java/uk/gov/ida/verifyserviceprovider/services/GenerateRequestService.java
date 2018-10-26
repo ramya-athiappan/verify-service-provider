@@ -13,25 +13,25 @@ public class GenerateRequestService {
 
     private final Client client;
 
-    public GenerateRequestService(Client client) {
+    public GenerateRequestService( Client client ) {
         this.client = client;
     }
 
-    public RequestResponseBody generateAuthnRequest(int localPort) {
+    public RequestResponseBody generateAuthnRequest( int localPort ) {
         return client
-            .target(URI.create(String.format("http://localhost:%d/generate-request", localPort)))
-            .request()
-            .buildPost(json(new RequestGenerationBody(LEVEL_2, null)))
-            .invoke()
-            .readEntity(RequestResponseBody.class);
+                .target(URI.create(String.format("http://localhost:%d/generate-request", localPort)))
+                .request()
+                .buildPost(json(new RequestGenerationBody(LEVEL_2, null)))
+                .invoke()
+                .readEntity(RequestResponseBody.class);
     }
 
-    public RequestResponseBody generateAuthnRequest(int localPort, String entityId) {
+    public RequestResponseBody generateAuthnRequest( int localPort, String entityId ) {
         return client
-            .target(URI.create(String.format("http://localhost:%d/generate-request", localPort)))
-            .request()
-            .buildPost(json(new RequestGenerationBody(LEVEL_2, entityId)))
-            .invoke()
-            .readEntity(RequestResponseBody.class);
+                .target(URI.create(String.format("http://localhost:%d/generate-request", localPort)))
+                .request()
+                .buildPost(json(new RequestGenerationBody(LEVEL_2, entityId)))
+                .invoke()
+                .readEntity(RequestResponseBody.class);
     }
 }

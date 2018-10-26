@@ -2,18 +2,14 @@ package feature.uk.gov.ida.verifyserviceprovider.configuration;
 
 import certificates.values.CACertificates;
 import keystore.KeyStoreResource;
-import keystore.KeyStoreRule;
 import keystore.builders.KeyStoreResourceBuilder;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import uk.gov.ida.verifyserviceprovider.configuration.HubMetadataConfiguration;
 import uk.gov.ida.verifyserviceprovider.configuration.VerifyHubConfiguration;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static uk.gov.ida.verifyserviceprovider.configuration.ConfigurationConstants.HUB_JERSEY_CLIENT_NAME;
-import static uk.gov.ida.verifyserviceprovider.configuration.ConfigurationConstants.PRODUCTION_VERIFY_TRUSTSTORE_NAME;
-import static uk.gov.ida.verifyserviceprovider.configuration.ConfigurationConstants.TEST_VERIFY_TRUSTSTORE_NAME;
 import static uk.gov.ida.verifyserviceprovider.utils.DefaultObjectMapper.OBJECT_MAPPER;
 
 public class VerifyHubConfigurationFeatureTests {
@@ -80,10 +76,10 @@ public class VerifyHubConfigurationFeatureTests {
     @Test
     public void shouldSetHubMetadataExpectedEntityIdToTheConfigValueIfOneHasBeenProvided() throws Exception {
         String config = "{" +
-            "\"environment\": \"INTEGRATION\"," +
-            "\"metadata\": {" +
-            "\"expectedEntityId\": \"some-expected-entity-id\"" +
-            "}}";
+                "\"environment\": \"INTEGRATION\"," +
+                "\"metadata\": {" +
+                "\"expectedEntityId\": \"some-expected-entity-id\"" +
+                "}}";
 
         VerifyHubConfiguration actualConfiguration = OBJECT_MAPPER.readValue(config, VerifyHubConfiguration.class);
 
@@ -93,12 +89,12 @@ public class VerifyHubConfigurationFeatureTests {
     @Test
     public void shouldSetHubMetadataTrustStorePathToTheConfigValueIfOneHasBeenProvided() throws Exception {
         String config = "{" +
-            "\"environment\": \"PRODUCTION\"," +
-            "\"metadata\": {" +
-            "\"trustStore\": {" +
-            "\"path\": \"" + keyStore.getAbsolutePath() + "\"," +
-            "\"password\": \"" + keyStore.getPassword() + "\"" +
-            "}}}";
+                "\"environment\": \"PRODUCTION\"," +
+                "\"metadata\": {" +
+                "\"trustStore\": {" +
+                "\"path\": \"" + keyStore.getAbsolutePath() + "\"," +
+                "\"password\": \"" + keyStore.getPassword() + "\"" +
+                "}}}";
 
         VerifyHubConfiguration actualConfiguration = OBJECT_MAPPER.readValue(config, VerifyHubConfiguration.class);
 
@@ -108,9 +104,9 @@ public class VerifyHubConfigurationFeatureTests {
     @Test
     public void shouldSetHubSsoLocationToTheConfigValueIfOneHasBeenProvided() throws Exception {
         String config = "{" +
-            "\"environment\": \"COMPLIANCE_TOOL\"," +
-            "\"hubSsoLocation\": \"http://some-hub-sso-location\"" +
-            "}";
+                "\"environment\": \"COMPLIANCE_TOOL\"," +
+                "\"hubSsoLocation\": \"http://some-hub-sso-location\"" +
+                "}";
 
         VerifyHubConfiguration actualConfiguration = OBJECT_MAPPER.readValue(config, VerifyHubConfiguration.class);
 
@@ -120,10 +116,10 @@ public class VerifyHubConfigurationFeatureTests {
     @Test
     public void shouldSetHubMetadataUriToTheConfigValueIfOneHasBeenProvided() throws Exception {
         String config = "{" +
-            "\"environment\": \"INTEGRATION\"," +
-            "\"metadata\": {" +
-            "\"uri\": \"http://some-metadata-location\"" +
-            "}}";
+                "\"environment\": \"INTEGRATION\"," +
+                "\"metadata\": {" +
+                "\"uri\": \"http://some-metadata-location\"" +
+                "}}";
 
         VerifyHubConfiguration actualConfiguration = OBJECT_MAPPER.readValue(config, VerifyHubConfiguration.class);
 

@@ -14,9 +14,9 @@ public class VerifyHubConfiguration {
 
     @JsonCreator
     public VerifyHubConfiguration(
-        @JsonProperty("environment") HubEnvironment hubEnvironment,
-        @JsonProperty("ssoLocation") URI hubSsoLocation,
-        @JsonProperty("metadata") HubMetadataConfiguration hubMetadataConfiguration
+            @JsonProperty("environment") HubEnvironment hubEnvironment,
+            @JsonProperty("ssoLocation") URI hubSsoLocation,
+            @JsonProperty("metadata") HubMetadataConfiguration hubMetadataConfiguration
     ) {
         this.hubSsoLocation = ofNullable(hubSsoLocation).orElse(hubEnvironment.getSsoLocation());
         this.hubMetadataConfiguration = ofNullable(hubMetadataConfiguration).orElse(createHubMetadataConfigurationWithDefaults());

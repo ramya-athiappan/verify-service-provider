@@ -65,10 +65,10 @@ public class AuthnRequestFactoryTest {
         PrivateKeyStore privateKeyStore = new PrivateKeyStoreFactory().create(TestEntityIds.TEST_RP);
         KeyPair keyPair = new KeyPair(KeySupport.derivePublicKey(privateKeyStore.getSigningPrivateKey()), privateKeyStore.getSigningPrivateKey());
         factory = new AuthnRequestFactory(
-            DESTINATION,
-            keyPair,
-            manifestReader,
-            encrypterFactory
+                DESTINATION,
+                keyPair,
+                manifestReader,
+                encrypterFactory
         );
     }
 

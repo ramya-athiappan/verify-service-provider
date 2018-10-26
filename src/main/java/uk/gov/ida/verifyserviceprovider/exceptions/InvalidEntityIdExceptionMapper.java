@@ -11,12 +11,12 @@ public class InvalidEntityIdExceptionMapper implements ExceptionMapper<InvalidEn
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(InvalidEntityIdExceptionMapper.class);
 
     @Override
-    public Response toResponse(InvalidEntityIdException exception) {
+    public Response toResponse( InvalidEntityIdException exception ) {
         LOG.warn(String.format("Request invalid for this service provider. %s", exception.getMessage()));
 
         return Response
-            .status(HttpStatus.SC_BAD_REQUEST)
-            .entity(new ErrorMessage(HttpStatus.SC_BAD_REQUEST, exception.getMessage()))
-            .build();
+                .status(HttpStatus.SC_BAD_REQUEST)
+                .entity(new ErrorMessage(HttpStatus.SC_BAD_REQUEST, exception.getMessage()))
+                .build();
     }
 }

@@ -13,10 +13,10 @@ public class TranslateSamlResponseBody {
 
     @JsonCreator
     public TranslateSamlResponseBody(
-        @JsonProperty(value = "samlResponse") String samlResponse,
-        @JsonProperty(value = "requestId") String requestId,
-        @JsonProperty(value = "levelOfAssurance") LevelOfAssurance levelOfAssurance,
-        @JsonProperty(value = "entityId") String entityId
+            @JsonProperty(value = "samlResponse") String samlResponse,
+            @JsonProperty(value = "requestId") String requestId,
+            @JsonProperty(value = "levelOfAssurance") LevelOfAssurance levelOfAssurance,
+            @JsonProperty(value = "entityId") String entityId
     ) {
         this.samlResponse = samlResponse;
         this.requestId = requestId;
@@ -39,5 +39,7 @@ public class TranslateSamlResponseBody {
         return levelOfAssurance;
     }
 
-    public String getEntityId() { return entityId; }
+    public String getEntityId() {
+        return entityId;
+    }
 }

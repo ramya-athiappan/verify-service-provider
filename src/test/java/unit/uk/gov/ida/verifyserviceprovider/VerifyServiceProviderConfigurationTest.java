@@ -28,10 +28,10 @@ public class VerifyServiceProviderConfigurationTest {
     @Rule
     public final ExpectedException expectedException = ExpectedException.none();
     private final YamlConfigurationFactory factory = new YamlConfigurationFactory<>(
-        VerifyServiceProviderConfiguration.class,
-        newValidator(),
-        newObjectMapper(),
-        "dw."
+            VerifyServiceProviderConfiguration.class,
+            newValidator(),
+            newObjectMapper(),
+            "dw."
     );
     private EnvironmentHelper environmentHelper = new EnvironmentHelper();
 
@@ -56,11 +56,11 @@ public class VerifyServiceProviderConfigurationTest {
         }});
 
         factory.build(
-            new SubstitutingSourceProvider(
-                new FileConfigurationSourceProvider(),
-                new EnvironmentVariableSubstitutor(false)
-            ),
-            "verify-service-provider.yml"
+                new SubstitutingSourceProvider(
+                        new FileConfigurationSourceProvider(),
+                        new EnvironmentVariableSubstitutor(false)
+                ),
+                "verify-service-provider.yml"
         );
     }
 
@@ -92,12 +92,12 @@ public class VerifyServiceProviderConfigurationTest {
 
         private String configuration;
 
-        public StringConfigurationSourceProvider(String configuration) {
+        public StringConfigurationSourceProvider( String configuration ) {
             this.configuration = configuration;
         }
 
         @Override
-        public InputStream open(String path) throws IOException {
+        public InputStream open( String path ) throws IOException {
             return new ByteArrayInputStream(this.configuration.getBytes());
         }
     }
