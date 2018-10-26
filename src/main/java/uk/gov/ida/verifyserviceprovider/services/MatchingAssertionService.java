@@ -23,15 +23,23 @@ import static java.util.Optional.ofNullable;
 import static uk.gov.ida.verifyserviceprovider.dto.Scenario.ACCOUNT_CREATION;
 import static uk.gov.ida.verifyserviceprovider.dto.Scenario.SUCCESS_MATCH;
 
-public class MatchingAssertionService extends AssertionService                                                                                                                                                                                                  {
+public class MatchingAssertionService implements ResponseBodyTranslator, TranslatedResultResponse {
+
+    private final SamlAssertionsSignatureValidator assertionsSignatureValidator;
+    private final AssertionValidator assertionValidator;
 
 
     public MatchingAssertionService(
-        SamlAssertionsSignatureValidator assertionsSignatureValidator,
-        AssertionValidator assertionValidator
+            SamlAssertionsSignatureValidator assertionsSignatureValidator,
+            AssertionValidator assertionValidator
     ) {
-        super(assertionsSignatureValidator,assertionValidator);
+        this.assertionsSignatureValidator = assertionsSignatureValidator;
+        this.assertionValidator = assertionValidator;
+    }
 
+    @Override
+    public TranslatedResultResponse getTranslatedResultResponse() {
+        return this;
     }
 
     public TranslatedResponseBody translateSuccessResponse(
@@ -56,10 +64,10 @@ public class MatchingAssertionService extends AssertionService                  
         List<AttributeStatement> attributeStatements = assertion.getAttributeStatements();
         if (isUserAccountCreation(attributeStatements)) {
             return new TranslatedResponseBody(
-                ACCOUNT_CREATION,
-                nameID,
-                levelOfAssurance,
-                AttributeTranslationService.translateAttributes(attributeStatements.get(0))
+                    ACCOUNT_CREATION,
+                    nameID,
+                    levelOfAssurance,
+                    AttributeTranslationService.translateAttributes(attributeStatements.get(0))
             );
 
         }
@@ -67,7 +75,7 @@ public class MatchingAssertionService extends AssertionService                  
 
     }
 
-    public TranslatedResponseBody translateNonSuccessResponse(StatusCode statusCode) {
+    public TranslatedResponseBody translateNonSuccessResponse( StatusCode statusCode ) {
         Optional.ofNullable(statusCode.getStatusCode())
                 .orElseThrow(() -> new SamlResponseValidationException("Missing status code for non-Success response"));
         String subStatus = statusCode.getStatusCode().getValue();
@@ -86,21 +94,17 @@ public class MatchingAssertionService extends AssertionService                  
         }
     }
 
-    private boolean isUserAccountCreation(List<AttributeStatement> attributeStatements) {
-        return !attributeStatements.isEmpty();
-    }
-
-    private void checkSamlhasAssertions(List<Assertion> assertions) {
+    private void checkSamlhasAssertions( List<Assertion> assertions ) {
         if (assertions == null || assertions.size() != 1) {
             throw new SamlResponseValidationException("Exactly one assertion is expected.");
         }
     }
 
-    private LevelOfAssurance extractLevelOfAssurance(AuthnStatement authnStatement) {
+    private LevelOfAssurance extractLevelOfAssurance( AuthnStatement authnStatement ) {
         String levelOfAssuranceString = ofNullable(authnStatement.getAuthnContext())
-            .map(AuthnContext::getAuthnContextClassRef)
-            .map(AuthnContextClassRef::getAuthnContextClassRef)
-            .orElseThrow(() -> new SamlResponseValidationException("Expected a level of assurance."));
+                .map(AuthnContext::getAuthnContextClassRef)
+                .map(AuthnContextClassRef::getAuthnContextClassRef)
+                .orElseThrow(() -> new SamlResponseValidationException("Expected a level of assurance."));
 
         try {
             return LevelOfAssurance.fromSamlValue(levelOfAssuranceString);
@@ -108,4 +112,9 @@ public class MatchingAssertionService extends AssertionService                  
             throw new SamlResponseValidationException(String.format("Level of assurance '%s' is not supported.", levelOfAssuranceString));
         }
     }
+
+    private boolean isUserAccountCreation( List<AttributeStatement> attributeStatements ) {
+        return !attributeStatements.isEmpty();
+    }
+
 }

@@ -19,29 +19,30 @@ public class ResponseService {
 
     private final StringToOpenSamlObjectTransformer<Response> stringToOpenSamlObjectTransformer;
     private final AssertionDecrypter assertionDecrypter;
-    private final AssertionService assertionService;
     private final SamlResponseSignatureValidator responseSignatureValidator;
     private final InstantValidator instantValidator;
 
+    private TranslatedResultResponse translatedResultResponse;
+
     public ResponseService(
-        StringToOpenSamlObjectTransformer<Response> stringToOpenSamlObjectTransformer,
-        AssertionDecrypter assertionDecrypter,
-        AssertionService assertionService,
-        SamlResponseSignatureValidator responseSignatureValidator,
-        InstantValidator instantValidator
+            StringToOpenSamlObjectTransformer<Response> stringToOpenSamlObjectTransformer,
+            AssertionDecrypter assertionDecrypter,
+            TranslatedResultResponse translatedResultResponse,
+            SamlResponseSignatureValidator responseSignatureValidator,
+            InstantValidator instantValidator
     ) {
         this.stringToOpenSamlObjectTransformer = stringToOpenSamlObjectTransformer;
         this.assertionDecrypter = assertionDecrypter;
-        this.assertionService = assertionService;
         this.responseSignatureValidator = responseSignatureValidator;
         this.instantValidator = instantValidator;
+        this.translatedResultResponse = translatedResultResponse;
     }
 
     public TranslatedResponseBody convertTranslatedResponseBody(
-        String decodedSamlResponse,
-        String expectedInResponseTo,
-        LevelOfAssurance expectedLevelOfAssurance,
-        String entityId
+            String decodedSamlResponse,
+            String expectedInResponseTo,
+            LevelOfAssurance expectedLevelOfAssurance,
+            String entityId
     ) {
         Response response = stringToOpenSamlObjectTransformer.apply(decodedSamlResponse);
 
@@ -49,7 +50,7 @@ public class ResponseService {
 
         if (!expectedInResponseTo.equals(validatedResponse.getInResponseTo())) {
             throw new SamlResponseValidationException(
-                String.format("Expected InResponseTo to be %s, but was %s", expectedInResponseTo, response.getInResponseTo())
+                    String.format("Expected InResponseTo to be %s, but was %s", expectedInResponseTo, response.getInResponseTo())
             );
         }
 
@@ -59,10 +60,10 @@ public class ResponseService {
 
         switch (statusCode.getValue()) {
             case StatusCode.RESPONDER:
-                return assertionService.translateNonSuccessResponse(statusCode);
+                return translatedResultResponse.translateNonSuccessResponse(statusCode);
             case StatusCode.SUCCESS:
                 List<Assertion> assertions = assertionDecrypter.decryptAssertions(validatedResponse);
-                return assertionService.translateSuccessResponse(assertions, expectedInResponseTo, expectedLevelOfAssurance, entityId);
+                return translatedResultResponse.translateSuccessResponse(assertions, expectedInResponseTo, expectedLevelOfAssurance, entityId);
             default:
                 throw new SamlResponseValidationException(String.format("Unknown SAML status: %s", statusCode.getValue()));
         }

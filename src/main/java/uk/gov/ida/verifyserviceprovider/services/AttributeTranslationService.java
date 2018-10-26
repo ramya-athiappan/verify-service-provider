@@ -21,7 +21,7 @@ import static java.util.stream.Collectors.toList;
 
 public class AttributeTranslationService {
 
-    public static Attributes translateAttributes(AttributeStatement attributeStatement) {
+    public static Attributes translateAttributes( AttributeStatement attributeStatement ) {
         List<Attribute> statementAttributes = attributeStatement.getAttributes();
 
         VerifiableAttribute<String> verifiableFirstName = getVerifiableStringAttribute(statementAttributes, "firstname", "firstname_verified");
@@ -34,38 +34,38 @@ public class AttributeTranslationService {
         return new Attributes(verifiableFirstName, verifiableMiddleName, verifiableSurname, verifiableDob, verifiableAddress, addressHistory.orElse(null), cycle3.orElse(null));
     }
 
-    private static VerifiableAttribute<String> getVerifiableStringAttribute(List<Attribute> statementAttributes, String attributeName, String attributeVerifiedName) {
+    private static VerifiableAttribute<String> getVerifiableStringAttribute( List<Attribute> statementAttributes, String attributeName, String attributeVerifiedName ) {
         final Optional<String> attributeValue = getStringAttributeValue(statementAttributes, attributeName);
         final Optional<Boolean> attributeVerified = getBooleanAttributeValue(statementAttributes, attributeVerifiedName);
         return VerifiableAttribute.fromOptionals(attributeValue, attributeVerified);
     }
 
-    private static VerifiableAttribute<LocalDate> getVerifiableDateAttribute(List<Attribute> statementAttributes, String attributeName, String attributeVerifiedName) {
+    private static VerifiableAttribute<LocalDate> getVerifiableDateAttribute( List<Attribute> statementAttributes, String attributeName, String attributeVerifiedName ) {
         final Optional<LocalDate> attributeValue = getDateAttributeValue(statementAttributes, attributeName);
         final Optional<Boolean> attributeVerified = getBooleanAttributeValue(statementAttributes, attributeVerifiedName);
         return VerifiableAttribute.fromOptionals(attributeValue, attributeVerified);
     }
 
-    private static VerifiableAttribute<Address> getVerifiableAddressAttribute(List<Attribute> statementAttributes, String attributeName, String attributeVerifiedName) {
+    private static VerifiableAttribute<Address> getVerifiableAddressAttribute( List<Attribute> statementAttributes, String attributeName, String attributeVerifiedName ) {
         final Optional<Address> attributeValue = getAddressAttributeValue(statementAttributes, attributeName);
         final Optional<Boolean> attributeVerified = getBooleanAttributeValue(statementAttributes, attributeVerifiedName);
         return VerifiableAttribute.fromOptionals(attributeValue, attributeVerified);
     }
 
-    private static Optional<List<VerifiableAttribute<Address>>> getVerifiableAddressListAttribute(List<Attribute> statementAttributes, String attributeName) {
+    private static Optional<List<VerifiableAttribute<Address>>> getVerifiableAddressListAttribute( List<Attribute> statementAttributes, String attributeName ) {
         final Optional<Attribute> attribute = getAttribute(statementAttributes, attributeName);
         return attribute.map(
-            attr -> attr.getAttributeValues().stream().map(
-                val -> toVerifiableAddress((AddressImpl) val)
-            ).collect(Collectors.toList())
+                attr -> attr.getAttributeValues().stream().map(
+                        val -> toVerifiableAddress((AddressImpl) val)
+                ).collect(Collectors.toList())
         );
     }
 
-    private static Optional<Attribute> getAttribute(List<Attribute> attributes, String name) {
+    private static Optional<Attribute> getAttribute( List<Attribute> attributes, String name ) {
         return attributes.stream().filter(a -> a.getName().equals(name)).findFirst();
     }
 
-    private static Optional<String> getStringAttributeValue(List<Attribute> attributes, String attributeName) {
+    private static Optional<String> getStringAttributeValue( List<Attribute> attributes, String attributeName ) {
         final Optional<Attribute> attribute = getAttribute(attributes, attributeName);
         return attribute.map(attr -> {
             StringValueSamlObject attributeValue = ((StringValueSamlObject) attr.getAttributeValues().get(0));
@@ -73,50 +73,50 @@ public class AttributeTranslationService {
         });
     }
 
-    private static Optional<Boolean> getBooleanAttributeValue(List<Attribute> attributes, String attributeName) {
+    private static Optional<Boolean> getBooleanAttributeValue( List<Attribute> attributes, String attributeName ) {
         final Optional<Attribute> attribute = getAttribute(attributes, attributeName);
         return attribute.map(attr -> ((Verified) attr.getAttributeValues().get(0)).getValue());
     }
 
-    private static Optional<LocalDate> getDateAttributeValue(List<Attribute> attributes, String attributeName) {
+    private static Optional<LocalDate> getDateAttributeValue( List<Attribute> attributes, String attributeName ) {
         return getStringAttributeValue(attributes, attributeName).map(x -> {
             try {
                 return LocalDate.parse(x, DateTimeFormatter.ISO_DATE);
             } catch (DateTimeParseException e) {
                 throw new SamlResponseValidationException(
-                    String.format("Error in SAML date format for attribute '%s'. Expected ISO date format, got: '%s'",
-                        attributeName,
-                        e.getParsedString())
+                        String.format("Error in SAML date format for attribute '%s'. Expected ISO date format, got: '%s'",
+                                attributeName,
+                                e.getParsedString())
                 );
             }
         });
     }
 
-    private static Optional<Address> getAddressAttributeValue(List<Attribute> attributes, String attributeName) {
+    private static Optional<Address> getAddressAttributeValue( List<Attribute> attributes, String attributeName ) {
         final Optional<Attribute> attribute = getAttribute(attributes, attributeName);
         return attribute.map(attr -> toAddress((AddressImpl) attr.getAttributeValues().get(0)));
     }
 
-    private static Address toAddress(AddressImpl address) {
+    private static Address toAddress( AddressImpl address ) {
         return new Address(
-            address.getLines().stream().map(StringValueSamlObject::getValue).collect(toList()),
-            getValueOrNull(address.getPostCode()),
-            getValueOrNull(address.getInternationalPostCode()),
-            getValueOrNull(address.getUPRN()),
-            convertToJavaLocalDate(address.getFrom()),
-            convertToJavaLocalDate(address.getTo())
+                address.getLines().stream().map(StringValueSamlObject::getValue).collect(toList()),
+                getValueOrNull(address.getPostCode()),
+                getValueOrNull(address.getInternationalPostCode()),
+                getValueOrNull(address.getUPRN()),
+                convertToJavaLocalDate(address.getFrom()),
+                convertToJavaLocalDate(address.getTo())
         );
     }
 
-    private static VerifiableAttribute<Address> toVerifiableAddress(AddressImpl address) {
+    private static VerifiableAttribute<Address> toVerifiableAddress( AddressImpl address ) {
         return new VerifiableAttribute<>(toAddress(address), address.getVerified());
     }
 
-    private static String getValueOrNull(StringValueSamlObject attributeValue) {
+    private static String getValueOrNull( StringValueSamlObject attributeValue ) {
         return Optional.ofNullable(attributeValue).map(StringValueSamlObject::getValue).orElse(null);
     }
 
-    private static LocalDate convertToJavaLocalDate(org.joda.time.DateTime joda) {
+    private static LocalDate convertToJavaLocalDate( org.joda.time.DateTime joda ) {
         if (joda == null) {
             return null;
         }

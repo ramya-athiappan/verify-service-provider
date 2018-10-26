@@ -34,24 +34,25 @@ public class VerifyServiceProviderFactory {
 
     private final DateTimeComparator dateTimeComparator;
     private final EntityIdService entityIdService;
-    private final MetadataResolverBundle verifyMetadataBundler;
+    private final MetadataResolverBundle verifyMetadataBundle;
     private final MetadataResolverBundle msaMetadataBundle;
     private final ManifestReader manifestReader;
 
     public VerifyServiceProviderFactory(
             VerifyServiceProviderConfiguration configuration,
-            MetadataResolverBundle verifyMetadataBundler,
-            MetadataResolverBundle msaMetadataBundle) throws KeyException {
+            MetadataResolverBundle verifyMetadataBundle,
+            MetadataResolverBundle msaMetadataBundle
+    ) throws KeyException {
         this.configuration = configuration;
         this.responseFactory = new ResponseFactory(getDecryptionKeyPairs(configuration.getSamlPrimaryEncryptionKey(), configuration.getSamlSecondaryEncryptionKey()));
         this.dateTimeComparator = new DateTimeComparator(configuration.getClockSkew());
         this.entityIdService = new EntityIdService(configuration.getServiceEntityIds());
-        this.verifyMetadataBundler = verifyMetadataBundler;
+        this.verifyMetadataBundle = verifyMetadataBundle;
         this.msaMetadataBundle = msaMetadataBundle;
         this.manifestReader = new ManifestReader();
     }
 
-    private List<KeyPair> getDecryptionKeyPairs(PrivateKey primary, PrivateKey secondary) throws KeyException {
+    private List<KeyPair> getDecryptionKeyPairs( PrivateKey primary, PrivateKey secondary ) throws KeyException {
         if (secondary == null) {
             return singletonList(createKeyPair(primary));
         } else {
@@ -59,26 +60,26 @@ public class VerifyServiceProviderFactory {
         }
     }
 
-    private KeyPair createKeyPair(PrivateKey key) throws KeyException {
+    private KeyPair createKeyPair( PrivateKey key ) throws KeyException {
         return new KeyPair(KeySupport.derivePublicKey(key), key);
     }
 
     public MetadataHealthCheck getHubMetadataHealthCheck() {
         return new MetadataHealthCheck(
                 getHubMetadataResolver(),
-            configuration.getVerifyHubMetadata().getExpectedEntityId()
+                configuration.getVerifyHubMetadata().getExpectedEntityId()
         );
     }
 
     public MetadataHealthCheck getMsaMetadataHealthCheck() {
         return new MetadataHealthCheck(
-            getMsaMetadataResolver(),
-            configuration.getMsaMetadata().getExpectedEntityId()
+                getMsaMetadataResolver(),
+                configuration.getMsaMetadata().getExpectedEntityId()
         );
     }
 
     public GenerateAuthnRequestResource getGenerateAuthnRequestResource() throws Exception {
-        MetadataCredentialResolver metadataCredentialResolver = getHubMetadataCredentialResolver();
+        MetadataCredentialResolver metadataCredentialResolver = getVerifyMetadataCredentialResolver();
         MetadataBackedEncryptionCredentialResolver encryptionCredentialResolver = new MetadataBackedEncryptionCredentialResolver(metadataCredentialResolver, SPSSODescriptor.DEFAULT_ELEMENT_NAME);
         EncrypterFactory encrypterFactory = new EncrypterFactory(encryptionCredentialResolver, configuration.getVerifyHubMetadata().getExpectedEntityId());
 
@@ -91,28 +92,28 @@ public class VerifyServiceProviderFactory {
         );
 
         return new GenerateAuthnRequestResource(
-            authnRequestFactory,
-            configuration.getHubSsoLocation(),
-            entityIdService
+                authnRequestFactory,
+                configuration.getHubSsoLocation(),
+                entityIdService
         );
     }
 
     public TranslateSamlResponseResource getTranslateSamlResponseResource() {
         return new TranslateSamlResponseResource(
-            responseFactory.createResponseService(
-                getHubSignatureTrustEngine(),
-                responseFactory.createMatchingAssertionService(getMsaSignatureTrustEngine(), dateTimeComparator),
-                dateTimeComparator
-            ),
-            entityIdService
+                responseFactory.createResponseService(
+                        getMsaSignatureTrustEngine(),
+                        responseFactory.createMatchingAssertionService(getMsaSignatureTrustEngine(), dateTimeComparator),
+                        dateTimeComparator
+                ),
+                entityIdService
         );
     }
 
     public TranslateNonMatchingSamlResponseResource getTranslateNonMatchingSamlResponseResource() {
         return new TranslateNonMatchingSamlResponseResource(
                 responseFactory.createResponseService(
-                        getHubSignatureTrustEngine(),
-                        responseFactory.createNonMatchingAssertionService(getMsaSignatureTrustEngine(), dateTimeComparator),
+                        getVerifyFederationSignatureTrustEngine(),
+                        responseFactory.createNonMatchingAssertionService(getVerifyFederationSignatureTrustEngine(), dateTimeComparator),
                         dateTimeComparator
                 ),
                 entityIdService
@@ -124,14 +125,15 @@ public class VerifyServiceProviderFactory {
     }
 
     private MetadataResolver getHubMetadataResolver() {
-        return verifyMetadataBundler.getMetadataResolver();
-    }
-    private ExplicitKeySignatureTrustEngine getHubSignatureTrustEngine() {
-        return verifyMetadataBundler.getSignatureTrustEngine();
+        return verifyMetadataBundle.getMetadataResolver();
     }
 
-    private MetadataCredentialResolver getHubMetadataCredentialResolver() {
-        return verifyMetadataBundler.getMetadataCredentialResolver();
+    private ExplicitKeySignatureTrustEngine getVerifyFederationSignatureTrustEngine() {
+        return verifyMetadataBundle.getSignatureTrustEngine();
+    }
+
+    private MetadataCredentialResolver getVerifyMetadataCredentialResolver() {
+        return verifyMetadataBundle.getMetadataCredentialResolver();
     }
 
     private MetadataResolver getMsaMetadataResolver() {
