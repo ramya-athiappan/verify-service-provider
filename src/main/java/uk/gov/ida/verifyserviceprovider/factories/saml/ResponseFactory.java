@@ -11,6 +11,7 @@ import uk.gov.ida.saml.deserializers.StringToOpenSamlObjectTransformer;
 import uk.gov.ida.saml.deserializers.parser.SamlObjectParser;
 import uk.gov.ida.saml.deserializers.validators.Base64StringDecoder;
 import uk.gov.ida.saml.deserializers.validators.NotNullSamlStringValidator;
+import uk.gov.ida.saml.metadata.EidasMetadataResolverRepository;
 import uk.gov.ida.saml.security.AssertionDecrypter;
 import uk.gov.ida.saml.security.DecrypterFactory;
 import uk.gov.ida.saml.security.IdaKeyStore;
@@ -25,6 +26,7 @@ import uk.gov.ida.verifyserviceprovider.dto.TranslatedResponseBody;
 import uk.gov.ida.verifyserviceprovider.mappers.MatchingDatasetToNonMatchingAttributesMapper;
 import uk.gov.ida.verifyserviceprovider.services.AssertionClassifier;
 import uk.gov.ida.verifyserviceprovider.services.AssertionService;
+import uk.gov.ida.verifyserviceprovider.services.EidasAssertionService;
 import uk.gov.ida.verifyserviceprovider.services.MsaAssertionService;
 import uk.gov.ida.verifyserviceprovider.services.IdpAssertionService;
 import uk.gov.ida.verifyserviceprovider.services.ResponseService;
@@ -147,6 +149,23 @@ public class ResponseFactory {
                 new MatchingDatasetToNonMatchingAttributesMapper(),
                 new LevelOfAssuranceValidator()
             );
+    }
+
+    public EidasAssertionService createEidasAssertionService(
+            DateTimeComparator dateTimeComparator,
+            EidasMetadataResolverRepository eidasMetadataResolverRepository
+    ) {
+        TimeRestrictionValidator timeRestrictionValidator = new TimeRestrictionValidator(dateTimeComparator);
+        AudienceRestrictionValidator audienceRestrictionValidator = new AudienceRestrictionValidator();
+
+        return new EidasAssertionService(
+                new SubjectValidator(timeRestrictionValidator),
+                new VerifyMatchingDatasetUnmarshaller(new AddressFactory()),
+                new MatchingDatasetToNonMatchingAttributesMapper(),
+                new InstantValidator(dateTimeComparator),
+                new ConditionsValidator(timeRestrictionValidator, audienceRestrictionValidator),
+                eidasMetadataResolverRepository
+        );
     }
 
     private MetadataBackedSignatureValidator createMetadataBackedSignatureValidator( ExplicitKeySignatureTrustEngine explicitKeySignatureTrustEngine ) {
