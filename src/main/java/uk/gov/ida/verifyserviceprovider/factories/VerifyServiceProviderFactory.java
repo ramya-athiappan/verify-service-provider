@@ -5,7 +5,13 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.security.impl.MetadataCredentialResolver;
 import org.opensaml.security.crypto.KeySupport;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
+import uk.gov.ida.saml.metadata.EidasMetadataConfiguration;
+import uk.gov.ida.saml.metadata.EidasMetadataResolverRepository;
+import uk.gov.ida.saml.metadata.EidasTrustAnchorResolver;
+import uk.gov.ida.saml.metadata.MetadataResolverConfigBuilder;
 import uk.gov.ida.saml.metadata.bundle.MetadataResolverBundle;
+import uk.gov.ida.saml.metadata.factories.DropwizardMetadataResolverFactory;
+import uk.gov.ida.saml.metadata.factories.MetadataSignatureTrustEngineFactory;
 import uk.gov.ida.saml.security.MetadataBackedEncryptionCredentialResolver;
 import uk.gov.ida.shared.utils.manifest.ManifestReader;
 import uk.gov.ida.verifyserviceprovider.configuration.VerifyServiceProviderConfiguration;
@@ -22,10 +28,12 @@ import uk.gov.ida.verifyserviceprovider.services.EntityIdService;
 import uk.gov.ida.verifyserviceprovider.services.IdpAssertionService;
 import uk.gov.ida.verifyserviceprovider.utils.DateTimeComparator;
 
+import javax.ws.rs.client.Client;
 import java.security.KeyException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.util.List;
+import java.util.Timer;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -40,11 +48,13 @@ public class VerifyServiceProviderFactory {
     private final MetadataResolverBundle verifyMetadataBundler;
     private final MetadataResolverBundle msaMetadataBundle;
     private final ManifestReader manifestReader;
+    private final Client client;
 
     public VerifyServiceProviderFactory(
             VerifyServiceProviderConfiguration configuration,
             MetadataResolverBundle verifyMetadataBundler,
-            MetadataResolverBundle msaMetadataBundle) throws KeyException {
+            MetadataResolverBundle msaMetadataBundle,
+            Client client) throws KeyException {
         this.configuration = configuration;
         this.responseFactory = new ResponseFactory(getDecryptionKeyPairs(configuration.getSamlPrimaryEncryptionKey(), configuration.getSamlSecondaryEncryptionKey()));
         this.dateTimeComparator = new DateTimeComparator(configuration.getClockSkew());
@@ -52,6 +62,7 @@ public class VerifyServiceProviderFactory {
         this.verifyMetadataBundler = verifyMetadataBundler;
         this.msaMetadataBundle = msaMetadataBundle;
         this.manifestReader = new ManifestReader();
+        this.client = client;
     }
 
     private List<KeyPair> getDecryptionKeyPairs(PrivateKey primary, PrivateKey secondary) throws KeyException {
@@ -117,9 +128,10 @@ public class VerifyServiceProviderFactory {
                 dateTimeComparator,
                 configuration.getHashingEntityId()
         );
+
         EidasAssertionService eidasAssertionService = responseFactory.createEidasAssertionService(
                 dateTimeComparator,
-                null  // FIXME
+                getEidasMetadataResolverRepository()
         );
 
         return new TranslateNonMatchingSamlResponseResource(
@@ -153,5 +165,22 @@ public class VerifyServiceProviderFactory {
 
     private ExplicitKeySignatureTrustEngine getMsaSignatureTrustEngine() {
         return msaMetadataBundle.getSignatureTrustEngine();
+    }
+
+    private EidasMetadataResolverRepository getEidasMetadataResolverRepository() {
+        return new EidasMetadataResolverRepository(
+            getEidasTrustAnchorResolver(),
+            configuration.getEuropeanIdentity().getAggregatedMetadata(),
+            new DropwizardMetadataResolverFactory(),
+            new Timer(),
+            new MetadataSignatureTrustEngineFactory(),
+            new MetadataResolverConfigBuilder(),
+            client
+        );
+    }
+
+    public EidasTrustAnchorResolver getEidasTrustAnchorResolver() {
+        EidasMetadataConfiguration metadataConfiguration = configuration.getEuropeanIdentity().getAggregatedMetadata();
+        return new EidasTrustAnchorResolver(metadataConfiguration.getTrustAnchorUri(), client, metadataConfiguration.getTrustStore());
     }
 }
