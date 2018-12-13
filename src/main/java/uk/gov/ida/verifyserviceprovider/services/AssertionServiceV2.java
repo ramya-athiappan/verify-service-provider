@@ -16,7 +16,7 @@ import uk.gov.ida.verifyserviceprovider.dto.NonMatchingAttributes;
 import uk.gov.ida.verifyserviceprovider.dto.NonMatchingScenario;
 import uk.gov.ida.verifyserviceprovider.dto.TranslatedNonMatchingResponseBody;
 import uk.gov.ida.verifyserviceprovider.exceptions.SamlResponseValidationException;
-import uk.gov.ida.verifyserviceprovider.mappers.MatchingDatasetToNonMatchingAttributesMapper;
+import uk.gov.ida.verifyserviceprovider.mappers.MatchingDatasetToAttributesMapper;
 import uk.gov.ida.verifyserviceprovider.services.AssertionClassifier.AssertionType;
 import uk.gov.ida.verifyserviceprovider.validators.LevelOfAssuranceValidator;
 import uk.gov.ida.verifyserviceprovider.validators.SubjectValidator;
@@ -34,23 +34,23 @@ import static uk.gov.ida.saml.core.validation.errors.GenericHubProfileValidation
 import static uk.gov.ida.saml.core.validation.errors.GenericHubProfileValidationSpecification.MISMATCHED_PIDS;
 import static uk.gov.ida.verifyserviceprovider.dto.NonMatchingScenario.IDENTITY_VERIFIED;
 
-public class NonMatchingAssertionService implements AssertionService<TranslatedNonMatchingResponseBody> {
+public class AssertionServiceV2 implements AssertionService<TranslatedNonMatchingResponseBody> {
 
     private final SamlAssertionsSignatureValidator assertionsSignatureValidator;
     private final SubjectValidator subjectValidator;
     private final AssertionAttributeStatementValidator attributeStatementValidator;
     private final MatchingDatasetUnmarshaller matchingDatasetUnmarshaller;
     private final AssertionClassifier assertionClassifierService;
-    private final MatchingDatasetToNonMatchingAttributesMapper mdsMapper;
+    private final MatchingDatasetToAttributesMapper mdsMapper;
     private final LevelOfAssuranceValidator levelOfAssuranceValidator;
 
-    public NonMatchingAssertionService(
+    public AssertionServiceV2(
             SamlAssertionsSignatureValidator assertionsSignatureValidator,
             SubjectValidator subjectValidator,
             AssertionAttributeStatementValidator attributeStatementValidator,
             MatchingDatasetUnmarshaller matchingDatasetUnmarshaller,
             AssertionClassifier assertionClassifierService,
-            MatchingDatasetToNonMatchingAttributesMapper mdsMapper,
+            MatchingDatasetToAttributesMapper mdsMapper,
             LevelOfAssuranceValidator levelOfAssuranceValidator
     ) {
         this.assertionsSignatureValidator = assertionsSignatureValidator;

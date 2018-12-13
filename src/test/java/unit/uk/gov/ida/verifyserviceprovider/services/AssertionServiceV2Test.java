@@ -25,9 +25,9 @@ import uk.gov.ida.saml.security.validators.ValidatedAssertions;
 import uk.gov.ida.shared.utils.datetime.DateTimeFreezer;
 import uk.gov.ida.verifyserviceprovider.dto.LevelOfAssurance;
 import uk.gov.ida.verifyserviceprovider.exceptions.SamlResponseValidationException;
-import uk.gov.ida.verifyserviceprovider.mappers.MatchingDatasetToNonMatchingAttributesMapper;
+import uk.gov.ida.verifyserviceprovider.mappers.MatchingDatasetToAttributesMapper;
 import uk.gov.ida.verifyserviceprovider.services.AssertionClassifier;
-import uk.gov.ida.verifyserviceprovider.services.NonMatchingAssertionService;
+import uk.gov.ida.verifyserviceprovider.services.AssertionServiceV2;
 import uk.gov.ida.verifyserviceprovider.validators.LevelOfAssuranceValidator;
 import uk.gov.ida.verifyserviceprovider.validators.SubjectValidator;
 
@@ -60,9 +60,9 @@ import static uk.gov.ida.saml.core.test.builders.SubjectConfirmationDataBuilder.
 import static uk.gov.ida.verifyserviceprovider.dto.LevelOfAssurance.LEVEL_1;
 import static uk.gov.ida.verifyserviceprovider.dto.LevelOfAssurance.LEVEL_2;
 
-public class NonMatchingAssertionServiceTest {
+public class AssertionServiceV2Test {
 
-    private NonMatchingAssertionService nonMatchingAssertionService;
+    private AssertionServiceV2 assertionServiceV2;
 
     @Mock
     private SubjectValidator subjectValidator;
@@ -88,13 +88,13 @@ public class NonMatchingAssertionServiceTest {
         IdaSamlBootstrap.bootstrap();
         initMocks(this);
 
-        nonMatchingAssertionService = new NonMatchingAssertionService(
+        assertionServiceV2 = new AssertionServiceV2(
                 hubSignatureValidator,
                 subjectValidator,
                 attributeStatementValidator,
                 verifyMatchingDatasetUnmarshaller,
                 new AssertionClassifier(),
-                new MatchingDatasetToNonMatchingAttributesMapper(),
+                new MatchingDatasetToAttributesMapper(),
                 levelOfAssuranceValidator
         );
         doNothing().when(subjectValidator).validate(any(), any());
@@ -116,7 +116,7 @@ public class NonMatchingAssertionServiceTest {
 
         exception.expect(SamlResponseValidationException.class);
         exception.expectMessage("Assertion IssueInstant is missing.");
-        nonMatchingAssertionService.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+        assertionServiceV2.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
     }
 
     @Test
@@ -126,7 +126,7 @@ public class NonMatchingAssertionServiceTest {
 
         exception.expect(SamlResponseValidationException.class);
         exception.expectMessage("Assertion Id is missing or blank.");
-        nonMatchingAssertionService.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+        assertionServiceV2.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
     }
 
     @Test
@@ -136,7 +136,7 @@ public class NonMatchingAssertionServiceTest {
 
         exception.expect(SamlResponseValidationException.class);
         exception.expectMessage("Assertion Id is missing or blank.");
-        nonMatchingAssertionService.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+        assertionServiceV2.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class NonMatchingAssertionServiceTest {
 
         exception.expect(SamlResponseValidationException.class);
         exception.expectMessage("Assertion with id mds-assertion has missing or blank Issuer.");
-        nonMatchingAssertionService.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+        assertionServiceV2.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
     }
 
     @Test
@@ -156,7 +156,7 @@ public class NonMatchingAssertionServiceTest {
 
         exception.expect(SamlResponseValidationException.class);
         exception.expectMessage("Assertion with id mds-assertion has missing or blank Issuer.");
-        nonMatchingAssertionService.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+        assertionServiceV2.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
     }
 
     @Test
@@ -166,7 +166,7 @@ public class NonMatchingAssertionServiceTest {
 
         exception.expect(SamlResponseValidationException.class);
         exception.expectMessage("Assertion with id mds-assertion has missing or blank Issuer.");
-        nonMatchingAssertionService.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+        assertionServiceV2.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
     }
 
     @Test
@@ -176,7 +176,7 @@ public class NonMatchingAssertionServiceTest {
 
         exception.expect(SamlResponseValidationException.class);
         exception.expectMessage("Assertion with id mds-assertion has missing Version.");
-        nonMatchingAssertionService.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+        assertionServiceV2.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
     }
 
 
@@ -187,7 +187,7 @@ public class NonMatchingAssertionServiceTest {
 
         exception.expect(SamlResponseValidationException.class);
         exception.expectMessage("Assertion with id mds-assertion declared an illegal Version attribute value.");
-        nonMatchingAssertionService.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+        assertionServiceV2.validateIdpAssertion(assertion, "not-used", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
     }
 
     @Test
@@ -195,7 +195,7 @@ public class NonMatchingAssertionServiceTest {
         Assertion authnAssertion = anAuthnStatementAssertion(IdaAuthnContext.LEVEL_2_AUTHN_CTX, "requestId").buildUnencrypted();
         Assertion mdsAssertion = aMatchingDatasetAssertionWithSignature(emptyList(), anIdpSignature(), "requestId").buildUnencrypted();
 
-        nonMatchingAssertionService.validate(authnAssertion, mdsAssertion,"requestId", LevelOfAssurance.LEVEL_1, LEVEL_2);
+        assertionServiceV2.validate(authnAssertion, mdsAssertion,"requestId", LevelOfAssurance.LEVEL_1, LEVEL_2);
 
         verify(subjectValidator, times(2)).validate(any(), any());
         verify(hubSignatureValidator, times(2)).validate(any(), any());
@@ -206,7 +206,7 @@ public class NonMatchingAssertionServiceTest {
     public void shouldCorrectlyExtractLevelOfAssurance() {
         Assertion authnAssertion = anAuthnStatementAssertion(IdaAuthnContext.LEVEL_2_AUTHN_CTX, "requestId").buildUnencrypted();
 
-        LevelOfAssurance loa = nonMatchingAssertionService.extractLevelOfAssuranceFrom(authnAssertion);
+        LevelOfAssurance loa = assertionServiceV2.extractLevelOfAssuranceFrom(authnAssertion);
 
         assertThat(loa).isEqualTo(LevelOfAssurance.LEVEL_2);
     }
@@ -219,7 +219,7 @@ public class NonMatchingAssertionServiceTest {
 
         exception.expect(SamlResponseValidationException.class);
         exception.expectMessage("Expected a level of assurance.");
-        nonMatchingAssertionService.translateSuccessResponse(ImmutableList.of(authnAssertion, mdsAssertion), "requestId", LEVEL_2, "default-entity-id");
+        assertionServiceV2.translateSuccessResponse(ImmutableList.of(authnAssertion, mdsAssertion), "requestId", LEVEL_2, "default-entity-id");
     }
 
 
@@ -230,7 +230,7 @@ public class NonMatchingAssertionServiceTest {
 
         exception.expect(SamlResponseValidationException.class);
         exception.expectMessage("Level of assurance 'unknown' is not supported.");
-        nonMatchingAssertionService.translateSuccessResponse(ImmutableList.of(authnAssertion, mdsAssertion), "requestId", LEVEL_2, "default-entity-id");
+        assertionServiceV2.translateSuccessResponse(ImmutableList.of(authnAssertion, mdsAssertion), "requestId", LEVEL_2, "default-entity-id");
     }
 
 

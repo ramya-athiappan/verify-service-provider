@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MatchingDatasetToNonMatchingAttributesMapper {
+public class MatchingDatasetToAttributesMapper {
 
     public NonMatchingAttributes mapToNonMatchingAttributes(MatchingDataset matchingDataset) {
         Optional<TransliterableMdsValue> firstNameValue = matchingDataset.getFirstNames().stream().findFirst();
         Optional<SimpleMdsValue<LocalDate>> birthDateValue = matchingDataset.getDateOfBirths().stream()
-            .map(MatchingDatasetToNonMatchingAttributesMapper::convertWrappedJodaLocalDateToJavaLocalDate)
+            .map(MatchingDatasetToAttributesMapper::convertWrappedJodaLocalDateToJavaLocalDate)
             .findFirst();
 
         NonMatchingVerifiableAttribute<String> firstName = firstNameValue.map(this::mapToNonMatchingVerifiableAttribute).orElse(null);
@@ -41,11 +41,11 @@ public class MatchingDatasetToNonMatchingAttributesMapper {
 
     private <T> NonMatchingVerifiableAttribute<T> mapToNonMatchingVerifiableAttribute(SimpleMdsValue<T> simpleMdsValueOptional) {
         LocalDateTime from = Optional.ofNullable(simpleMdsValueOptional.getFrom())
-                .map(MatchingDatasetToNonMatchingAttributesMapper::convertJodaDateTimeToJavaLocalDateTime)
+                .map(MatchingDatasetToAttributesMapper::convertJodaDateTimeToJavaLocalDateTime)
                 .orElse(null);
 
         LocalDateTime to = Optional.ofNullable(simpleMdsValueOptional.getTo())
-                .map(MatchingDatasetToNonMatchingAttributesMapper::convertJodaDateTimeToJavaLocalDateTime)
+                .map(MatchingDatasetToAttributesMapper::convertJodaDateTimeToJavaLocalDateTime)
                 .orElse(null);
 
         return new NonMatchingVerifiableAttribute<>(
@@ -67,11 +67,11 @@ public class MatchingDatasetToNonMatchingAttributesMapper {
             );
 
             LocalDateTime from = Optional.ofNullable(input.getFrom())
-                    .map(MatchingDatasetToNonMatchingAttributesMapper::convertJodaDateTimeToJavaLocalDateTime)
+                    .map(MatchingDatasetToAttributesMapper::convertJodaDateTimeToJavaLocalDateTime)
                     .orElse(null);
 
             LocalDateTime to = input.getTo()
-                    .map(MatchingDatasetToNonMatchingAttributesMapper::convertJodaDateTimeToJavaLocalDateTime)
+                    .map(MatchingDatasetToAttributesMapper::convertJodaDateTimeToJavaLocalDateTime)
                     .orElse(null);
 
             NonMatchingVerifiableAttribute<NonMatchingAddress> addressAttribute = new NonMatchingVerifiableAttribute<>(
