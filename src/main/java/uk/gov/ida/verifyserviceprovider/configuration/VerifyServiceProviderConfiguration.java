@@ -79,13 +79,7 @@ public class VerifyServiceProviderConfiguration extends Configuration {
     }
 
     public MsaMetadataConfiguration getMsaMetadata() {
-        return msaMetadata.orElseGet(
-                ()-> new MsaMetadataConfiguration
-                        (
-                                null,0l, 0l,
-                                "",null,"",""
-                        )
-        );
+        return msaMetadata.orElseGet(()-> new MsaMetadataConfiguration(URI.create(""),0l, 0l, "",null,"",""));
     }
 
     public HubMetadataConfiguration getVerifyHubMetadata() {
