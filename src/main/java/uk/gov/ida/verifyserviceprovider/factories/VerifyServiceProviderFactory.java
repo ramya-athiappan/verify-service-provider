@@ -23,6 +23,7 @@ import java.security.KeyException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -35,7 +36,7 @@ public class VerifyServiceProviderFactory {
     private final DateTimeComparator dateTimeComparator;
     private final EntityIdService entityIdService;
     private final MetadataResolverBundle verifyMetadataBundler;
-    private final MetadataResolverBundle msaMetadataBundle;
+    private final Optional<MetadataResolverBundle> msaMetadataBundle;
     private final ManifestReader manifestReader;
 
     public VerifyServiceProviderFactory(
@@ -47,7 +48,7 @@ public class VerifyServiceProviderFactory {
         this.dateTimeComparator = new DateTimeComparator(configuration.getClockSkew());
         this.entityIdService = new EntityIdService(configuration.getServiceEntityIds());
         this.verifyMetadataBundler = verifyMetadataBundler;
-        this.msaMetadataBundle = msaMetadataBundle;
+        this.msaMetadataBundle = Optional.ofNullable(msaMetadataBundle);
         this.manifestReader = new ManifestReader();
     }
 
@@ -138,10 +139,10 @@ public class VerifyServiceProviderFactory {
     }
 
     private MetadataResolver getMsaMetadataResolver() {
-        return msaMetadataBundle.getMetadataResolver();
+        return msaMetadataBundle.map(item -> item.getMetadataResolver()).get();
     }
 
     private ExplicitKeySignatureTrustEngine getMsaSignatureTrustEngine() {
-        return msaMetadataBundle.getSignatureTrustEngine();
+        return msaMetadataBundle.map(item->item.getSignatureTrustEngine()).get();
     }
 }

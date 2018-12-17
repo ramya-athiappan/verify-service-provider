@@ -13,6 +13,7 @@ import javax.validation.constraints.Size;
 import java.net.URI;
 import java.security.PrivateKey;
 import java.util.List;
+import java.util.Optional;
 
 public class VerifyServiceProviderConfiguration extends Configuration {
 
@@ -23,7 +24,7 @@ public class VerifyServiceProviderConfiguration extends Configuration {
     private PrivateKey samlSigningKey;
     private PrivateKey samlPrimaryEncryptionKey;
     private PrivateKey samlSecondaryEncryptionKey;
-    private MsaMetadataConfiguration msaMetadata;
+    private Optional<MsaMetadataConfiguration> msaMetadata;
     private Duration clockSkew;
 
     @JsonCreator
@@ -34,7 +35,7 @@ public class VerifyServiceProviderConfiguration extends Configuration {
         @JsonProperty("samlSigningKey") @NotNull @Valid @JsonDeserialize(using = PrivateKeyDeserializer.class) PrivateKey samlSigningKey,
         @JsonProperty("samlPrimaryEncryptionKey") @NotNull @Valid @JsonDeserialize(using = PrivateKeyDeserializer.class) PrivateKey samlPrimaryEncryptionKey,
         @JsonProperty("samlSecondaryEncryptionKey") @Valid @JsonDeserialize(using = PrivateKeyDeserializer.class) PrivateKey samlSecondaryEncryptionKey,
-        @JsonProperty("msaMetadata") @NotNull @Valid MsaMetadataConfiguration msaMetadata,
+        @JsonProperty("msaMetadata") @Valid MsaMetadataConfiguration msaMetadata,
         @JsonProperty("clockSkew") @NotNull @Valid Duration clockSkew
     ) {
         this.serviceEntityIds = serviceEntityIds;
@@ -43,7 +44,7 @@ public class VerifyServiceProviderConfiguration extends Configuration {
         this.samlSigningKey = samlSigningKey;
         this.samlPrimaryEncryptionKey = samlPrimaryEncryptionKey;
         this.samlSecondaryEncryptionKey = samlSecondaryEncryptionKey;
-        this.msaMetadata = msaMetadata;
+        this.msaMetadata = Optional.ofNullable(msaMetadata);
         this.clockSkew = clockSkew;
     }
 
@@ -78,7 +79,13 @@ public class VerifyServiceProviderConfiguration extends Configuration {
     }
 
     public MsaMetadataConfiguration getMsaMetadata() {
-        return msaMetadata;
+        return msaMetadata.orElseGet(
+                ()-> new MsaMetadataConfiguration
+                        (
+                                null,0l, 0l,
+                                "",null,"",""
+                        )
+        );
     }
 
     public HubMetadataConfiguration getVerifyHubMetadata() {
