@@ -1,12 +1,12 @@
 package uk.gov.ida.verifyserviceprovider;
 
 import com.google.common.collect.ImmutableMap;
-import common.uk.gov.ida.verifyserviceprovider.servers.MockMsaServer;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import org.json.JSONObject;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+import uk.gov.ida.verifyserviceprovider.Utils.MdsValueChecker;
 import uk.gov.ida.verifyserviceprovider.domain.MatchingAddress;
 import uk.gov.ida.verifyserviceprovider.domain.MatchingAttribute;
 import uk.gov.ida.verifyserviceprovider.domain.V2MatchingDataset;
@@ -21,7 +21,6 @@ import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import static java.util.Collections.singletonList;
 import static javax.ws.rs.client.Entity.json;
@@ -32,16 +31,15 @@ import static uk.gov.ida.verifyserviceprovider.builders.VerifyServiceProviderApp
 import static uk.gov.ida.verifyserviceprovider.dto.LevelOfAssurance.LEVEL_1;
 import static uk.gov.ida.verifyserviceprovider.dto.LevelOfAssurance.LEVEL_2;
 import static uk.gov.ida.verifyserviceprovider.dto.NonMatchingScenario.IDENTITY_VERIFIED;
-import static uk.gov.ida.verifyserviceprovider.services.ComplianceToolService.*;
+import static uk.gov.ida.verifyserviceprovider.services.ComplianceToolService.VERIFIED_USER_ON_SERVICE_WITH_NON_MATCH_SETTING_ID;
+import static uk.gov.ida.verifyserviceprovider.services.ComplianceToolService.AUTHENTICATION_FAILED_WITH_NON_MATCH_SETTING_ID;
+import static uk.gov.ida.verifyserviceprovider.services.ComplianceToolService.FRAUDULENT_MATCH_RESPONSE_WITH_NON_MATCH_SETTING_ID;
+import static uk.gov.ida.verifyserviceprovider.services.ComplianceToolService.NO_AUTHENTICATION_CONTEXT_WITH_NON_MATCH_SETTING_ID;
 
 public class NonMatchingAcceptanceTest {
 
     @ClassRule
-    public static MockMsaServer msaServer = new MockMsaServer();
-
-    @ClassRule
     public static VerifyServiceProviderAppRule application = aVerifyServiceProviderAppRule()
-            .withMockMsaServer(msaServer)
             .build();
 
     private static Client client;

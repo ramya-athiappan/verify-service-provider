@@ -1,4 +1,4 @@
-package uk.gov.ida.verifyserviceprovider;
+package uk.gov.ida.verifyserviceprovider.Utils;
 
 import org.assertj.core.api.Assertions;
 import org.json.JSONArray;
@@ -7,8 +7,6 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class MdsValueChecker {
-    public MdsValueChecker() {
-    }
 
     public static void checkMdsValueOfAttribute(
             String attributeName,
